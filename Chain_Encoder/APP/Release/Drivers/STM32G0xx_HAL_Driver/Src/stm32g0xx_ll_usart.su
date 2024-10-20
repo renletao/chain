@@ -1,0 +1,6 @@
+../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_usart.h:1881:22:LL_USART_SetBaudRate	8	static
+../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_usart.c:139:13:LL_USART_DeInit	0	static
+../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_usart.c:224:13:LL_USART_Init	40	static
+../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_usart.c:373:6:LL_USART_StructInit	0	static
+../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_usart.c:400:13:LL_USART_ClockInit	8	static
+../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_usart.c:447:6:LL_USART_ClockStructInit	0	static

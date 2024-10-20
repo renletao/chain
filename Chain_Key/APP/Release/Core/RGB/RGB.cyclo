@@ -1,0 +1,10 @@
+../Core/RGB/RGB.c:20:13:activate_tim1_dma	1
+../Core/RGB/RGB.c:53:13:rgb_setcolor	7
+../Core/RGB/RGB.c:80:13:reset_load	2
+../Core/RGB/RGB.c:95:13:rgb_send_array	1
+../Core/RGB/RGB.c:114:13:turn_off_all_handle	1
+../Core/RGB/RGB.c:133:6:rgb_init	1
+../Core/RGB/RGB.c:150:6:chain_set_rgb_value	2
+../Core/RGB/RGB.c:190:6:chain_get_rgb_value	1
+../Core/RGB/RGB.c:208:6:chain_set_light_value	2
+../Core/RGB/RGB.c:247:6:chain_get_light_value	1

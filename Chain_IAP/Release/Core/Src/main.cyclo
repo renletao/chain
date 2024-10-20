@@ -1,0 +1,12 @@
+../Core/Src/main.c:266:17:get_page	1
+../Core/Src/main.c:106:9:compute_fw_crc32	2
+../Core/Src/main.c:128:6:uart2_ll_send_char	5
+../Core/Src/main.c:146:6:reset_all_periph	1
+../Core/Src/main.c:175:6:jump_app	3
+../Core/Src/main.c:205:6:USART1_IRQHandler	10
+../Core/Src/main.c:279:6:write_code	6
+../Core/Src/main.c:367:6:iap_usart	3
+../Core/Src/main.c:406:6:iap_gpio_init	1
+../Core/Src/main.c:526:6:Error_Handler	1
+../Core/Src/main.c:481:6:SystemClock_Config	7
+../Core/Src/main.c:426:5:main	1

@@ -1,0 +1,10 @@
+../Core/Chain_Function/encoder_function.c:34:19:check_add_overflow	0	static
+../Core/Chain_Function/encoder_function.c:19:6:encoder_init	8	static
+../Core/Chain_Function/encoder_function.c:57:6:encoder_update	8	static
+../Core/Chain_Function/encoder_function.c:105:6:chain_get_encoder_value_handle	8	static
+../Core/Chain_Function/encoder_function.c:118:6:chain_get_inc_encoder_value_handle	8	static
+../Core/Chain_Function/encoder_function.c:131:6:chain_get_button_value_handle	8	static
+../Core/Chain_Function/encoder_function.c:144:6:chain_reset_encoder_value_handle	8	static
+../Core/Chain_Function/encoder_function.c:168:6:chain_reset_inc_encoder_value_handle	8	static
+../Core/Chain_Function/encoder_function.c:193:6:chain_set_ab_status_handle	8	static
+../Core/Chain_Function/encoder_function.c:217:6:chain_get_ab_status_handle	8	static

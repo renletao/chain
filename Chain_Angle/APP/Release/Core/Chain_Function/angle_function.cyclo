@@ -1,0 +1,6 @@
+../Core/Chain_Function/angle_function.c:17:9:map12_to8	1
+../Core/Chain_Function/angle_function.c:30:13:adc_get_value	6
+../Core/Chain_Function/angle_function.c:64:6:chain_angle_get_12value	1
+../Core/Chain_Function/angle_function.c:76:6:chain_angle_get_8value	1
+../Core/Chain_Function/angle_function.c:88:6:chain_angle_set_clockwise	2
+../Core/Chain_Function/angle_function.c:106:6:chain_angle_get_clockwise	1
