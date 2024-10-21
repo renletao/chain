@@ -39,10 +39,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-__IO int16_t g_encoder_count = 0;	   // 编码器�??
-__IO int16_t g_increment_count = 0;	   // 编码器增量�??
-__IO uint8_t g_button_press_state = 0; // 按钮按压状�??
-__IO uint8_t g_encoder_direct = 0;	   // AB方向�?0->AB�?1->BA
+__IO int16_t g_encoder_count = 0;      // Encoder total count
+__IO int16_t g_increment_count = 0;    // Encoder increment count
+__IO uint8_t g_encoder_direct = 0;     // Encoder direction: 0->AB, 1->BA
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -54,31 +53,41 @@ __IO uint8_t g_encoder_direct = 0;	   // AB方向�?0->AB�?1->BA
 
 /* USER CODE BEGIN PV */
 // DMA receive buffers
-__IO uint8_t g_uart_in_rx_buf[2][BUFFER_SIZE];	// uart_in receive buffer for DMA
-__IO uint8_t g_uart_out_rx_buf[2][BUFFER_SIZE]; // uart_out receive buffer for DMA
+__IO uint8_t g_uart_in_rx_buf[2][BUFFER_SIZE]; // uart_in receive buffer for DMA
+__IO uint8_t
+    g_uart_out_rx_buf[2][BUFFER_SIZE]; // uart_out receive buffer for DMA
 
 // Transmission status for UART
-__IO uint8_t g_uart_in_tx_status = 0;  // Status of uart_in transmission (0: not transmitting, 1: transmitting)
-__IO uint8_t g_uart_out_tx_status = 0; // Status of uart_out transmission (0: not transmitting, 1: transmitting)
+__IO uint8_t g_uart_in_tx_status =
+    0; // Status of uart_in transmission (0: not transmitting, 1: transmitting)
+__IO uint8_t g_uart_out_tx_status =
+    0; // Status of uart_out transmission (0: not transmitting, 1: transmitting)
 
 // Transmission complete flags for UART
-__IO uint8_t g_uart_in_transmit_commplete = 1;	// Flag indicating if uart_in transmission is complete (1: complete)
-__IO uint8_t g_uart_out_transmit_commplete = 1; // Flag indicating if uart_out transmission is complete (1: complete)
+__IO uint8_t g_uart_in_transmit_commplete =
+    1; // Flag indicating if uart_in transmission is complete (1: complete)
+__IO uint8_t g_uart_out_transmit_commplete =
+    1; // Flag indicating if uart_out transmission is complete (1: complete)
 
 // Command buffer and related variables
-__IO uint8_t g_cmd_buf[BUFFER_SIZE] = {0};		   // Command buffer initialized to zero
-__IO uint8_t g_cmd_size = 0;					   // Size of the command currently in the buffer
-__IO uint8_t g_cmd_status = CMD_SPACE_IDLE_STATUS; // Status of the command processing
+__IO uint8_t g_cmd_buf[BUFFER_SIZE] = {0}; // Command buffer initialized to zero
+__IO uint8_t g_cmd_size = 0; // Size of the command currently in the buffer
+__IO uint8_t g_cmd_status =
+    CMD_SPACE_IDLE_STATUS; // Status of the command processing
 
 // Device status variables
-__IO uint8_t g_tail_status = CHAIN_TAIL_DEVICE;		// Status of the tail device in the chain
-__IO uint8_t g_heart_beat_record = 0;				// Heartbeat record for monitoring device status
-__IO uint8_t g_bootloader_version = 0;				// Version of the bootloader
+__IO uint8_t g_tail_status =
+    CHAIN_TAIL_DEVICE; // Status of the tail device in the chain
+__IO uint8_t g_heart_beat_record =
+    0; // Heartbeat record for monitoring device status
+__IO uint8_t g_bootloader_version = 0;              // Version of the bootloader
 __IO uint8_t g_firmware_version = SOFTWARE_VERSION; // Version of the firmware
 
 // Device type information
-__IO uint16_t g_device_type = (uint8_t)((PRODUCT_TYPE_HIGH << 8) | PRODUCT_TYPE_LOW); // Combined product type from high and low bytes
-__IO uint8_t g_light = 0;															  // Light status or value
+__IO uint16_t g_device_type = (uint8_t)(
+    (PRODUCT_TYPE_HIGH << 8) |
+    PRODUCT_TYPE_LOW);    // Combined product type from high and low bytes
+__IO uint8_t g_light = 0; // Light status or value
 
 /* USER CODE END PV */
 
@@ -95,23 +104,22 @@ void SystemClock_Config(void);
  * @param None
  * @retval None
  */
-void iap_set(void)
-{
-	uint8_t i;									  // Loop index
-	uint32_t *pVecTab = (uint32_t *)(0x20000000); // Pointer to the vector table in SRAM
+void iap_set(void) {
+  uint8_t i; // Loop index
+  uint32_t *pVecTab =
+      (uint32_t *)(0x20000000); // Pointer to the vector table in SRAM
 
-	// Copy the interrupt vector table from the application address to SRAM
-	for (i = 0; i < 48; i++)
-	{
-		// Copy each vector entry to the SRAM vector table
-		*(pVecTab++) = *(__IO uint32_t *)(APPLICATION_ADDRESS + (i << 2));
-	}
+  // Copy the interrupt vector table from the application address to SRAM
+  for (i = 0; i < 48; i++) {
+    // Copy each vector entry to the SRAM vector table
+    *(pVecTab++) = *(__IO uint32_t *)(APPLICATION_ADDRESS + (i << 2));
+  }
 
-	// Enable the SYSCFG peripheral clock
-	__HAL_RCC_SYSCFG_CLK_ENABLE();
+  // Enable the SYSCFG peripheral clock
+  __HAL_RCC_SYSCFG_CLK_ENABLE();
 
-	// Remap the memory to use SRAM for the vector table
-	__HAL_SYSCFG_REMAPMEMORY_SRAM();
+  // Remap the memory to use SRAM for the vector table
+  __HAL_SYSCFG_REMAPMEMORY_SRAM();
 }
 
 /**
@@ -119,36 +127,33 @@ void iap_set(void)
  * @param None
  * @retval None
  */
-void chain_init(void)
-{
-    // Get the bootloader version and store it in a global variable
-    g_bootloader_version = get_bootloader_version();
+void chain_init(void) {
+  // Get the bootloader version and store it in a global variable
+  g_bootloader_version = get_bootloader_version();
 
-    // Check the current AB status; if it is uninitialized (0xFF)
-    if (get_ab_status() == 0xFF)
-    {
-        // Set the encoder direction to the default value (ENCODER_AB) and save it to the global variable
-        g_encoder_direct = ENCODER_AB;
-        set_ab_status(g_encoder_direct);  // Write the new status to flash memory
-    }
-    else
-    {
-        // If the AB status is initialized, read the current AB status from flash memory
-        g_encoder_direct = get_ab_status();
-    }
+  // Check the current AB status; if it is uninitialized (0xFF)
+  if (get_ab_status() == 0xFF) {
+    // Set the encoder direction to the default value (ENCODER_AB) and save it
+    // to the global variable
+    g_encoder_direct = ENCODER_AB;
+    set_ab_status(g_encoder_direct); // Write the new status to flash memory
+  } else {
+    // If the AB status is initialized, read the current AB status from flash
+    // memory
+    g_encoder_direct = get_ab_status();
+  }
 
-    // Check the current RGB light status; if it is uninitialized (0xFF)
-    if (get_rgb_light() == 0xFF)
-    {
-        // Set the RGB light to the default value (RGB_LIGHT_BASE) and save it to the global variable
-        g_light = RGB_LIGHT_BASE;
-        set_rgb_light(g_light);  // Write the new light status to flash memory
-    }
-    else
-    {
-        // If the RGB light status is initialized, read the current light status from flash memory
-        g_light = get_rgb_light();
-    }
+  // Check the current RGB light status; if it is uninitialized (0xFF)
+  if (get_rgb_light() == 0xFF) {
+    // Set the RGB light to the default value (RGB_LIGHT_BASE) and save it to
+    // the global variable
+    g_light = RGB_LIGHT_BASE;
+    set_rgb_light(g_light); // Write the new light status to flash memory
+  } else {
+    // If the RGB light status is initialized, read the current light status
+    // from flash memory
+    g_light = get_rgb_light();
+  }
 }
 
 /* USER CODE END 0 */
@@ -161,8 +166,8 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	iap_set();
-	chain_init();
+  iap_set();
+  chain_init();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -192,77 +197,71 @@ int main(void)
   MX_TIM16_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-	rgb_init();
-	encoder_init();				   // encoder init
-	LL_TIM_EnableIT_UPDATE(TIM14); // ENABLE TIM14
-	LL_TIM_EnableCounter(TIM14);   // ENABLE TIM14
+  rgb_init();
+  encoder_init();                // encoder init
+  LL_TIM_EnableIT_UPDATE(TIM14); // ENABLE TIM14
+  LL_TIM_EnableCounter(TIM14);   // ENABLE TIM14
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	while (1)
-	{
-		encoder_update();
-		if (g_cmd_status == CMD_SPACE_BUSY_STATUS)
-		{
-			switch (g_cmd_buf[0])
-			{
-			case CHAIN_GET_ENCODER_VALUE:
-				chain_get_encoder_value_handle();
-				break;
-			case CHAIN_GET_INC_ENCODER_VALUE:
-				chain_get_inc_encoder_value_handle();
-				g_increment_count = 0;
-				break;
-			case CHAIN_GET_BUTTON_VALUE:
-				chain_get_button_value_handle();
-				break;
-			case CHAIN_RESET_ENCODER_VALUE:
-				chain_reset_encoder_value_handle();
-				break;
-			case CHAIN_RESET_INC_ENCODER_VALUE:
-				chain_reset_inc_encoder_value_handle();
-				break;
-			case CHAIN_SET_AB_STATUS:
-				chain_set_ab_status_handle(g_cmd_buf[1]);
-				break;
-			case CHAIN_GET_AB_STATUS:
-				chain_get_ab_status_handle();
-				break;
-			case CHAIN_SET_RGB_VALUE:
-				chain_set_rgb_value((uint8_t *)(g_cmd_buf + 1), (g_cmd_size - 1));
-				break;
-			case CHAIN_GET_RGB_VALUE:
-				chain_get_rgb_value();
-				break;
-			case CHAIN_SET_RGB_LIGHT:
-				chain_set_light_value(g_cmd_buf[1]);
-				break;
-			case CHAIN_GET_RGB_LIGHT:
-				chain_get_light_value();
-				break;
-			case CHAIN_GET_BOOTLOADER_VERSION:
-				chain_get_bootloader_version_handle();
-				break;
-			case CHAIN_GET_VERSION_DEVICE:
-				chain_get_firmware_version_handle();
-				break;
-			case CHAIN_GET_DEVICE_TYPE:
-				chain_get_device_type_handle();
-				break;
-			case CHAIN_IAP_UPDATE:
-				chain_iap_update_handle(g_cmd_buf[1]);
-				break;
-			default:
-				break;
-			}
-			g_cmd_status = CMD_SPACE_IDLE_STATUS;
-		}
+  while (1) {
+    encoder_update();
+    if (g_cmd_status == CMD_SPACE_BUSY_STATUS) {
+      switch (g_cmd_buf[0]) {
+      case CHAIN_ENCODER_GET_VALUE:
+        chain_encoder_get_value_handle();
+        break;
+      case CHAIN_ENCODER_GET_INC_VALUE:
+        chain_encoder_get_inc_value_handle();
+        g_increment_count = 0;
+        break;
+      case CHAIN_ENCODER_RESET_VALUE:
+        chain_encoder_reset_value_handle();
+        break;
+      case CHAIN_ENCODER_RESET_INC_VALUE:
+        chain_encoder_reset_inc_value_handle();
+        break;
+      case CHAIN_ENCODER_SET_AB_STATUS:
+        chain_encoder_set_ab_status_handle(g_cmd_buf[1]);
+        break;
+      case CHAIN_ENCODER_GET_AB_STATUS:
+        chain_encoder_get_ab_status_handle();
+        break;
+      case CHAIN_SET_RGB_VALUE:
+        chain_set_rgb_value((uint8_t *)(g_cmd_buf + 1), (g_cmd_size - 1));
+        break;
+      case CHAIN_GET_RGB_VALUE:
+        chain_get_rgb_value();
+        break;
+      case CHAIN_SET_RGB_LIGHT:
+        chain_set_light_value(g_cmd_buf[1]);
+        break;
+      case CHAIN_GET_RGB_LIGHT:
+        chain_get_light_value();
+        break;
+      case CHAIN_GET_BOOTLOADER_VERSION:
+        chain_get_bootloader_version_handle();
+        break;
+      case CHAIN_GET_VERSION_DEVICE:
+        chain_get_firmware_version_handle();
+        break;
+      case CHAIN_GET_DEVICE_TYPE:
+        chain_get_device_type_handle();
+        break;
+      case CHAIN_IAP_UPDATE:
+        chain_iap_update_handle(g_cmd_buf[1]);
+        break;
+      default:
+        break;
+      }
+      g_cmd_status = CMD_SPACE_IDLE_STATUS;
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		LL_IWDG_ReloadCounter(IWDG);
-	}
+    LL_IWDG_ReloadCounter(IWDG);
+  }
   /* USER CODE END 3 */
 }
 
@@ -314,7 +313,13 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
+{
+  if (GPIO_Pin == BTN1_Pin)
+  {
+    key_press_down_send();
+  }
+}
 /* USER CODE END 4 */
 
 /**
@@ -324,11 +329,10 @@ void SystemClock_Config(void)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-	/* User can add his own implementation to report the HAL error return state */
-	__disable_irq();
-	while (1)
-	{
-	}
+  /* User can add his own implementation to report the HAL error return state */
+  __disable_irq();
+  while (1) {
+  }
   /* USER CODE END Error_Handler_Debug */
 }
 
@@ -343,8 +347,9 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-	/* User can add his own implementation to report the file name and line number,
-	   ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  /* User can add his own implementation to report the file name and line
+     number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

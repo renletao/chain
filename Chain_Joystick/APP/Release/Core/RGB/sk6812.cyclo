@@ -1,0 +1,6 @@
+../Core/RGB/sk6812.c:37:6:GPIO_init	1
+../Core/RGB/sk6812.c:47:6:sk6812_init	2
+../Core/RGB/sk6812.c:54:6:neopixel_set_color	1
+../Core/RGB/sk6812.c:58:6:neopixel_set_all_color	2
+../Core/RGB/sk6812.c:74:6:color_set_single	3
+../Core/RGB/sk6812.c:64:6:neopixel_show	3

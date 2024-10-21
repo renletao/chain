@@ -73,6 +73,7 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define BTN1_Pin GPIO_PIN_0
 #define BTN1_GPIO_Port GPIOB
+#define BTN1_EXTI_IRQn EXTI0_1_IRQn
 
 /* USER CODE BEGIN Private defines */
 #define APPLICATION_ADDRESS (0x08002000)  // App starting address

@@ -4168,16 +4168,16 @@ void encoder_update(void) {
  8003ec4:	00007fff 	.word	0x00007fff
  8003ec8:	ffff8000 	.word	0xffff8000
 
-08003ecc <chain_get_encoder_value_handle>:
+08003ecc <chain_encoder_get_value_handle>:
 /**
  * @brief  获取编码器的值
  * @param  无
  * @retval 无
  */
-void chain_get_encoder_value_handle(void) {
+void chain_encoder_get_value_handle(void) {
  8003ecc:	b510      	push	{r4, lr}
-	chain_command_complete_return(CHAIN_GET_ENCODER_VALUE,
- 8003ece:	4903      	ldr	r1, [pc, #12]	@ (8003edc <chain_get_encoder_value_handle+0x10>)
+	chain_command_complete_return(CHAIN_ENCODER_GET_VALUE,
+ 8003ece:	4903      	ldr	r1, [pc, #12]	@ (8003edc <chain_encoder_get_value_handle+0x10>)
  8003ed0:	2202      	movs	r2, #2
  8003ed2:	2010      	movs	r0, #16
  8003ed4:	f7ff ff1c 	bl	8003d10 <chain_command_complete_return>
@@ -4187,16 +4187,16 @@ void chain_get_encoder_value_handle(void) {
  8003eda:	46c0      	nop			@ (mov r8, r8)
  8003edc:	20000db4 	.word	0x20000db4
 
-08003ee0 <chain_get_inc_encoder_value_handle>:
+08003ee0 <chain_encoder_get_inc_value_handle>:
 /**
  * @brief  获取编码器增量值
  * @param  无
  * @retval 无
  */
-void chain_get_inc_encoder_value_handle(void) {
+void chain_encoder_get_inc_value_handle(void) {
  8003ee0:	b510      	push	{r4, lr}
-	chain_command_complete_return(CHAIN_GET_INC_ENCODER_VALUE,
- 8003ee2:	4903      	ldr	r1, [pc, #12]	@ (8003ef0 <chain_get_inc_encoder_value_handle+0x10>)
+	chain_command_complete_return(CHAIN_ENCODER_GET_INC_VALUE,
+ 8003ee2:	4903      	ldr	r1, [pc, #12]	@ (8003ef0 <chain_encoder_get_inc_value_handle+0x10>)
  8003ee4:	2202      	movs	r2, #2
  8003ee6:	2011      	movs	r0, #17
  8003ee8:	f7ff ff12 	bl	8003d10 <chain_command_complete_return>
@@ -4225,139 +4225,139 @@ void chain_get_button_value_handle(void) {
  8003f02:	46c0      	nop			@ (mov r8, r8)
  8003f04:	20000db1 	.word	0x20000db1
 
-08003f08 <chain_reset_encoder_value_handle>:
+08003f08 <chain_encoder_reset_value_handle>:
 /**
  * @brief  复位编码器值
  * @param  无
  * @retval 无
  */
-void chain_reset_encoder_value_handle(void) {
+void chain_encoder_reset_value_handle(void) {
  8003f08:	b510      	push	{r4, lr}
 	g_encoder_count = 0;
- 8003f0a:	4b0e      	ldr	r3, [pc, #56]	@ (8003f44 <chain_reset_encoder_value_handle+0x3c>)
+ 8003f0a:	4b0e      	ldr	r3, [pc, #56]	@ (8003f44 <chain_encoder_reset_value_handle+0x3c>)
  8003f0c:	2200      	movs	r2, #0
  8003f0e:	801a      	strh	r2, [r3, #0]
 	s_ret_buf_size = 0;
- 8003f10:	4a0d      	ldr	r2, [pc, #52]	@ (8003f48 <chain_reset_encoder_value_handle+0x40>)
+ 8003f10:	4a0d      	ldr	r2, [pc, #52]	@ (8003f48 <chain_encoder_reset_value_handle+0x40>)
  8003f12:	2100      	movs	r1, #0
  8003f14:	7011      	strb	r1, [r2, #0]
 	if (g_encoder_count == 0) {
  8003f16:	881b      	ldrh	r3, [r3, #0]
  8003f18:	b21b      	sxth	r3, r3
  8003f1a:	2b00      	cmp	r3, #0
- 8003f1c:	d10b      	bne.n	8003f36 <chain_reset_encoder_value_handle+0x2e>
+ 8003f1c:	d10b      	bne.n	8003f36 <chain_encoder_reset_value_handle+0x2e>
 		s_ret_buf[s_ret_buf_size++] = OPERATION_SUCCESS;
  8003f1e:	0013      	movs	r3, r2
  8003f20:	2201      	movs	r2, #1
  8003f22:	701a      	strb	r2, [r3, #0]
- 8003f24:	4b09      	ldr	r3, [pc, #36]	@ (8003f4c <chain_reset_encoder_value_handle+0x44>)
+ 8003f24:	4b09      	ldr	r3, [pc, #36]	@ (8003f4c <chain_encoder_reset_value_handle+0x44>)
  8003f26:	701a      	strb	r2, [r3, #0]
 	} else {
 		s_ret_buf[s_ret_buf_size++] = OPERATION_FAIL;
 	}
-	chain_command_complete_return(CHAIN_RESET_ENCODER_VALUE, s_ret_buf,
- 8003f28:	4b07      	ldr	r3, [pc, #28]	@ (8003f48 <chain_reset_encoder_value_handle+0x40>)
+	chain_command_complete_return(CHAIN_ENCODER_RESET_VALUE, s_ret_buf,
+ 8003f28:	4b07      	ldr	r3, [pc, #28]	@ (8003f48 <chain_encoder_reset_value_handle+0x40>)
  8003f2a:	781a      	ldrb	r2, [r3, #0]
- 8003f2c:	4907      	ldr	r1, [pc, #28]	@ (8003f4c <chain_reset_encoder_value_handle+0x44>)
+ 8003f2c:	4907      	ldr	r1, [pc, #28]	@ (8003f4c <chain_encoder_reset_value_handle+0x44>)
  8003f2e:	2013      	movs	r0, #19
  8003f30:	f7ff feee 	bl	8003d10 <chain_command_complete_return>
 			s_ret_buf_size);
 }
  8003f34:	bd10      	pop	{r4, pc}
 		s_ret_buf[s_ret_buf_size++] = OPERATION_FAIL;
- 8003f36:	4b04      	ldr	r3, [pc, #16]	@ (8003f48 <chain_reset_encoder_value_handle+0x40>)
+ 8003f36:	4b04      	ldr	r3, [pc, #16]	@ (8003f48 <chain_encoder_reset_value_handle+0x40>)
  8003f38:	2201      	movs	r2, #1
  8003f3a:	701a      	strb	r2, [r3, #0]
- 8003f3c:	4b03      	ldr	r3, [pc, #12]	@ (8003f4c <chain_reset_encoder_value_handle+0x44>)
+ 8003f3c:	4b03      	ldr	r3, [pc, #12]	@ (8003f4c <chain_encoder_reset_value_handle+0x44>)
  8003f3e:	2200      	movs	r2, #0
  8003f40:	701a      	strb	r2, [r3, #0]
- 8003f42:	e7f1      	b.n	8003f28 <chain_reset_encoder_value_handle+0x20>
+ 8003f42:	e7f1      	b.n	8003f28 <chain_encoder_reset_value_handle+0x20>
  8003f44:	20000db4 	.word	0x20000db4
  8003f48:	20000344 	.word	0x20000344
  8003f4c:	20000348 	.word	0x20000348
 
-08003f50 <chain_reset_inc_encoder_value_handle>:
+08003f50 <chain_encoder_reset_inc_value_handle>:
 /**
  * @brief  复位编码器增量值
  * @param  无
  * @retval 无
  */
-void chain_reset_inc_encoder_value_handle(void) {
+void chain_encoder_reset_inc_value_handle(void) {
  8003f50:	b510      	push	{r4, lr}
 	g_increment_count = 0;
- 8003f52:	4b0e      	ldr	r3, [pc, #56]	@ (8003f8c <chain_reset_inc_encoder_value_handle+0x3c>)
+ 8003f52:	4b0e      	ldr	r3, [pc, #56]	@ (8003f8c <chain_encoder_reset_inc_value_handle+0x3c>)
  8003f54:	2200      	movs	r2, #0
  8003f56:	801a      	strh	r2, [r3, #0]
 	s_ret_buf_size = 0;
- 8003f58:	4a0d      	ldr	r2, [pc, #52]	@ (8003f90 <chain_reset_inc_encoder_value_handle+0x40>)
+ 8003f58:	4a0d      	ldr	r2, [pc, #52]	@ (8003f90 <chain_encoder_reset_inc_value_handle+0x40>)
  8003f5a:	2100      	movs	r1, #0
  8003f5c:	7011      	strb	r1, [r2, #0]
 	if (g_increment_count == 0) {
  8003f5e:	881b      	ldrh	r3, [r3, #0]
  8003f60:	b21b      	sxth	r3, r3
  8003f62:	2b00      	cmp	r3, #0
- 8003f64:	d10b      	bne.n	8003f7e <chain_reset_inc_encoder_value_handle+0x2e>
+ 8003f64:	d10b      	bne.n	8003f7e <chain_encoder_reset_inc_value_handle+0x2e>
 		s_ret_buf[s_ret_buf_size++] = OPERATION_SUCCESS;
  8003f66:	0013      	movs	r3, r2
  8003f68:	2201      	movs	r2, #1
  8003f6a:	701a      	strb	r2, [r3, #0]
- 8003f6c:	4b09      	ldr	r3, [pc, #36]	@ (8003f94 <chain_reset_inc_encoder_value_handle+0x44>)
+ 8003f6c:	4b09      	ldr	r3, [pc, #36]	@ (8003f94 <chain_encoder_reset_inc_value_handle+0x44>)
  8003f6e:	701a      	strb	r2, [r3, #0]
 	} else {
 		s_ret_buf[s_ret_buf_size++] = OPERATION_FAIL;
 	}
-	chain_command_complete_return(CHAIN_RESET_INC_ENCODER_VALUE, s_ret_buf,
- 8003f70:	4b07      	ldr	r3, [pc, #28]	@ (8003f90 <chain_reset_inc_encoder_value_handle+0x40>)
+	chain_command_complete_return(CHAIN_ENCODER_RESET_INC_VALUE, s_ret_buf,
+ 8003f70:	4b07      	ldr	r3, [pc, #28]	@ (8003f90 <chain_encoder_reset_inc_value_handle+0x40>)
  8003f72:	781a      	ldrb	r2, [r3, #0]
- 8003f74:	4907      	ldr	r1, [pc, #28]	@ (8003f94 <chain_reset_inc_encoder_value_handle+0x44>)
+ 8003f74:	4907      	ldr	r1, [pc, #28]	@ (8003f94 <chain_encoder_reset_inc_value_handle+0x44>)
  8003f76:	2014      	movs	r0, #20
  8003f78:	f7ff feca 	bl	8003d10 <chain_command_complete_return>
 			s_ret_buf_size);
 }
  8003f7c:	bd10      	pop	{r4, pc}
 		s_ret_buf[s_ret_buf_size++] = OPERATION_FAIL;
- 8003f7e:	4b04      	ldr	r3, [pc, #16]	@ (8003f90 <chain_reset_inc_encoder_value_handle+0x40>)
+ 8003f7e:	4b04      	ldr	r3, [pc, #16]	@ (8003f90 <chain_encoder_reset_inc_value_handle+0x40>)
  8003f80:	2201      	movs	r2, #1
  8003f82:	701a      	strb	r2, [r3, #0]
- 8003f84:	4b03      	ldr	r3, [pc, #12]	@ (8003f94 <chain_reset_inc_encoder_value_handle+0x44>)
+ 8003f84:	4b03      	ldr	r3, [pc, #12]	@ (8003f94 <chain_encoder_reset_inc_value_handle+0x44>)
  8003f86:	2200      	movs	r2, #0
  8003f88:	701a      	strb	r2, [r3, #0]
- 8003f8a:	e7f1      	b.n	8003f70 <chain_reset_inc_encoder_value_handle+0x20>
+ 8003f8a:	e7f1      	b.n	8003f70 <chain_encoder_reset_inc_value_handle+0x20>
  8003f8c:	20000db2 	.word	0x20000db2
  8003f90:	20000344 	.word	0x20000344
  8003f94:	20000348 	.word	0x20000348
 
-08003f98 <chain_set_ab_status_handle>:
+08003f98 <chain_encoder_set_ab_status_handle>:
 /**
  * @brief  设置AB状态
  * @param  无
  * @retval 无
  */
-void chain_set_ab_status_handle(uint8_t status) {
+void chain_encoder_set_ab_status_handle(uint8_t status) {
  8003f98:	b510      	push	{r4, lr}
 	s_ret_buf_size = 0;
- 8003f9a:	4b0e      	ldr	r3, [pc, #56]	@ (8003fd4 <chain_set_ab_status_handle+0x3c>)
+ 8003f9a:	4b0e      	ldr	r3, [pc, #56]	@ (8003fd4 <chain_encoder_set_ab_status_handle+0x3c>)
  8003f9c:	2200      	movs	r2, #0
  8003f9e:	701a      	strb	r2, [r3, #0]
 	if (status == ENCODER_AB || status == ENCODER_BA) {
  8003fa0:	2801      	cmp	r0, #1
- 8003fa2:	d90c      	bls.n	8003fbe <chain_set_ab_status_handle+0x26>
+ 8003fa2:	d90c      	bls.n	8003fbe <chain_encoder_set_ab_status_handle+0x26>
 		s_ret_buf[s_ret_buf_size++] = OPERATION_SUCCESS;
 		g_encoder_direct = status;
 		set_ab_status(g_encoder_direct);
 	} else {
 		s_ret_buf[s_ret_buf_size++] = OPERATION_FAIL;
- 8003fa4:	4b0b      	ldr	r3, [pc, #44]	@ (8003fd4 <chain_set_ab_status_handle+0x3c>)
+ 8003fa4:	4b0b      	ldr	r3, [pc, #44]	@ (8003fd4 <chain_encoder_set_ab_status_handle+0x3c>)
  8003fa6:	2201      	movs	r2, #1
  8003fa8:	701a      	strb	r2, [r3, #0]
- 8003faa:	4b0b      	ldr	r3, [pc, #44]	@ (8003fd8 <chain_set_ab_status_handle+0x40>)
+ 8003faa:	4b0b      	ldr	r3, [pc, #44]	@ (8003fd8 <chain_encoder_set_ab_status_handle+0x40>)
  8003fac:	2200      	movs	r2, #0
  8003fae:	701a      	strb	r2, [r3, #0]
 	}
 	chain_command_complete_return(CHAIN_SET_AB_STATUS, s_ret_buf,
- 8003fb0:	4b08      	ldr	r3, [pc, #32]	@ (8003fd4 <chain_set_ab_status_handle+0x3c>)
+ 8003fb0:	4b08      	ldr	r3, [pc, #32]	@ (8003fd4 <chain_encoder_set_ab_status_handle+0x3c>)
  8003fb2:	781a      	ldrb	r2, [r3, #0]
- 8003fb4:	4908      	ldr	r1, [pc, #32]	@ (8003fd8 <chain_set_ab_status_handle+0x40>)
+ 8003fb4:	4908      	ldr	r1, [pc, #32]	@ (8003fd8 <chain_encoder_set_ab_status_handle+0x40>)
  8003fb6:	2015      	movs	r0, #21
  8003fb8:	f7ff feaa 	bl	8003d10 <chain_command_complete_return>
 			s_ret_buf_size);
@@ -4366,38 +4366,38 @@ void chain_set_ab_status_handle(uint8_t status) {
 		s_ret_buf[s_ret_buf_size++] = OPERATION_SUCCESS;
  8003fbe:	3201      	adds	r2, #1
  8003fc0:	701a      	strb	r2, [r3, #0]
- 8003fc2:	4b05      	ldr	r3, [pc, #20]	@ (8003fd8 <chain_set_ab_status_handle+0x40>)
+ 8003fc2:	4b05      	ldr	r3, [pc, #20]	@ (8003fd8 <chain_encoder_set_ab_status_handle+0x40>)
  8003fc4:	701a      	strb	r2, [r3, #0]
 		g_encoder_direct = status;
- 8003fc6:	4b05      	ldr	r3, [pc, #20]	@ (8003fdc <chain_set_ab_status_handle+0x44>)
+ 8003fc6:	4b05      	ldr	r3, [pc, #20]	@ (8003fdc <chain_encoder_set_ab_status_handle+0x44>)
  8003fc8:	7018      	strb	r0, [r3, #0]
 		set_ab_status(g_encoder_direct);
  8003fca:	7818      	ldrb	r0, [r3, #0]
  8003fcc:	b2c0      	uxtb	r0, r0
  8003fce:	f001 fae5 	bl	800559c <set_ab_status>
- 8003fd2:	e7ed      	b.n	8003fb0 <chain_set_ab_status_handle+0x18>
+ 8003fd2:	e7ed      	b.n	8003fb0 <chain_encoder_set_ab_status_handle+0x18>
  8003fd4:	20000344 	.word	0x20000344
  8003fd8:	20000348 	.word	0x20000348
  8003fdc:	20000db0 	.word	0x20000db0
 
-08003fe0 <chain_get_ab_status_handle>:
+08003fe0 <chain_encoder_get_ab_status_handle>:
 /**
  * @brief  获取AB状态
  * @param  无
  * @retval 无
  */
-void chain_get_ab_status_handle(void) {
+void chain_encoder_get_ab_status_handle(void) {
  8003fe0:	b510      	push	{r4, lr}
 	s_ret_buf_size = 0;
- 8003fe2:	4b06      	ldr	r3, [pc, #24]	@ (8003ffc <chain_get_ab_status_handle+0x1c>)
+ 8003fe2:	4b06      	ldr	r3, [pc, #24]	@ (8003ffc <chain_encoder_get_ab_status_handle+0x1c>)
  8003fe4:	2200      	movs	r2, #0
  8003fe6:	701a      	strb	r2, [r3, #0]
 	s_ret_buf[s_ret_buf_size++] = g_encoder_direct;
  8003fe8:	3201      	adds	r2, #1
  8003fea:	701a      	strb	r2, [r3, #0]
- 8003fec:	4b04      	ldr	r3, [pc, #16]	@ (8004000 <chain_get_ab_status_handle+0x20>)
+ 8003fec:	4b04      	ldr	r3, [pc, #16]	@ (8004000 <chain_encoder_get_ab_status_handle+0x20>)
  8003fee:	781b      	ldrb	r3, [r3, #0]
- 8003ff0:	4904      	ldr	r1, [pc, #16]	@ (8004004 <chain_get_ab_status_handle+0x24>)
+ 8003ff0:	4904      	ldr	r1, [pc, #16]	@ (8004004 <chain_encoder_get_ab_status_handle+0x24>)
  8003ff2:	700b      	strb	r3, [r1, #0]
 	chain_command_complete_return(CHAIN_GET_AB_STATUS, s_ret_buf,
  8003ff4:	2016      	movs	r0, #22
@@ -5463,8 +5463,8 @@ int main(void) {
  80045e2:	f7ff fbe9 	bl	8003db8 <chain_get_firmware_version_handle>
 				break;
  80045e6:	e001      	b.n	80045ec <main+0x78>
-				chain_get_encoder_value_handle();
- 80045e8:	f7ff fc70 	bl	8003ecc <chain_get_encoder_value_handle>
+				chain_encoder_get_value_handle();
+ 80045e8:	f7ff fc70 	bl	8003ecc <chain_encoder_get_value_handle>
 			g_cmd_status = CMD_SPACE_IDLE_STATUS;
  80045ec:	4b28      	ldr	r3, [pc, #160]	@ (8004690 <main+0x11c>)
  80045ee:	2200      	movs	r2, #0
@@ -5495,8 +5495,8 @@ int main(void) {
  800461c:	4a1f      	ldr	r2, [pc, #124]	@ (800469c <main+0x128>)
  800461e:	58d3      	ldr	r3, [r2, r3]
  8004620:	469f      	mov	pc, r3
-				chain_get_inc_encoder_value_handle();
- 8004622:	f7ff fc5d 	bl	8003ee0 <chain_get_inc_encoder_value_handle>
+				chain_encoder_get_inc_value_handle();
+ 8004622:	f7ff fc5d 	bl	8003ee0 <chain_encoder_get_inc_value_handle>
 				g_increment_count = 0;
  8004626:	4b1e      	ldr	r3, [pc, #120]	@ (80046a0 <main+0x12c>)
  8004628:	2200      	movs	r2, #0
@@ -5507,23 +5507,23 @@ int main(void) {
  800462e:	f7ff fc61 	bl	8003ef4 <chain_get_button_value_handle>
 				break;
  8004632:	e7db      	b.n	80045ec <main+0x78>
-				chain_reset_encoder_value_handle();
- 8004634:	f7ff fc68 	bl	8003f08 <chain_reset_encoder_value_handle>
+				chain_encoder_reset_value_handle();
+ 8004634:	f7ff fc68 	bl	8003f08 <chain_encoder_reset_value_handle>
 				break;
  8004638:	e7d8      	b.n	80045ec <main+0x78>
-				chain_reset_inc_encoder_value_handle();
- 800463a:	f7ff fc89 	bl	8003f50 <chain_reset_inc_encoder_value_handle>
+				chain_encoder_reset_inc_value_handle();
+ 800463a:	f7ff fc89 	bl	8003f50 <chain_encoder_reset_inc_value_handle>
 				break;
  800463e:	e7d5      	b.n	80045ec <main+0x78>
-				chain_set_ab_status_handle(g_cmd_buf[1]);
+				chain_encoder_set_ab_status_handle(g_cmd_buf[1]);
  8004640:	4b12      	ldr	r3, [pc, #72]	@ (800468c <main+0x118>)
  8004642:	7858      	ldrb	r0, [r3, #1]
  8004644:	b2c0      	uxtb	r0, r0
- 8004646:	f7ff fca7 	bl	8003f98 <chain_set_ab_status_handle>
+ 8004646:	f7ff fca7 	bl	8003f98 <chain_encoder_set_ab_status_handle>
 				break;
  800464a:	e7cf      	b.n	80045ec <main+0x78>
-				chain_get_ab_status_handle();
- 800464c:	f7ff fcc8 	bl	8003fe0 <chain_get_ab_status_handle>
+				chain_encoder_get_ab_status_handle();
+ 800464c:	f7ff fcc8 	bl	8003fe0 <chain_encoder_get_ab_status_handle>
 				break;
  8004650:	e7cc      	b.n	80045ec <main+0x78>
 				chain_set_rgb_value((uint8_t *)(g_cmd_buf+1),(g_cmd_size-1));

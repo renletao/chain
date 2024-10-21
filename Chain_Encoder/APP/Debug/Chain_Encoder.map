@@ -4800,27 +4800,27 @@ LOAD C:/CubeIDE/STM32CubeIDE_1.16.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mc
  .text.encoder_update
                 0x08003e2c       0xa0 ./Core/Chain_Function/encoder_function.o
                 0x08003e2c                encoder_update
- .text.chain_get_encoder_value_handle
+ .text.chain_encoder_get_value_handle
                 0x08003ecc       0x14 ./Core/Chain_Function/encoder_function.o
-                0x08003ecc                chain_get_encoder_value_handle
- .text.chain_get_inc_encoder_value_handle
+                0x08003ecc                chain_encoder_get_value_handle
+ .text.chain_encoder_get_inc_value_handle
                 0x08003ee0       0x14 ./Core/Chain_Function/encoder_function.o
-                0x08003ee0                chain_get_inc_encoder_value_handle
+                0x08003ee0                chain_encoder_get_inc_value_handle
  .text.chain_get_button_value_handle
                 0x08003ef4       0x14 ./Core/Chain_Function/encoder_function.o
                 0x08003ef4                chain_get_button_value_handle
- .text.chain_reset_encoder_value_handle
+ .text.chain_encoder_reset_value_handle
                 0x08003f08       0x48 ./Core/Chain_Function/encoder_function.o
-                0x08003f08                chain_reset_encoder_value_handle
- .text.chain_reset_inc_encoder_value_handle
+                0x08003f08                chain_encoder_reset_value_handle
+ .text.chain_encoder_reset_inc_value_handle
                 0x08003f50       0x48 ./Core/Chain_Function/encoder_function.o
-                0x08003f50                chain_reset_inc_encoder_value_handle
- .text.chain_set_ab_status_handle
+                0x08003f50                chain_encoder_reset_inc_value_handle
+ .text.chain_encoder_set_ab_status_handle
                 0x08003f98       0x48 ./Core/Chain_Function/encoder_function.o
-                0x08003f98                chain_set_ab_status_handle
- .text.chain_get_ab_status_handle
+                0x08003f98                chain_encoder_set_ab_status_handle
+ .text.chain_encoder_get_ab_status_handle
                 0x08003fe0       0x28 ./Core/Chain_Function/encoder_function.o
-                0x08003fe0                chain_get_ab_status_handle
+                0x08003fe0                chain_encoder_get_ab_status_handle
  .text.activate_tim1_dma
                 0x08004008       0x68 ./Core/RGB/RGB.o
  .text.rgb_setcolor
