@@ -309,13 +309,6 @@ void DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler(void)
 		LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_4);
 		g_uart_out_transmit_commplete = 1;
 	}
-	if (LL_DMA_IsActiveFlag_TC5(DMA1))
-	{
-		LL_DMA_ClearFlag_GI5(DMA1);
-		LL_DMA_ClearFlag_TC5(DMA1);
-		LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_5);
-		LL_TIM_DisableCounter(TIM1);
-	}
   /* USER CODE END DMA1_Ch4_5_DMAMUX1_OVR_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_adc1);
   /* USER CODE BEGIN DMA1_Ch4_5_DMAMUX1_OVR_IRQn 1 */

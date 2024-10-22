@@ -36,8 +36,9 @@ void joystick_init(void) {
 }
 
 void chain_joystick_get_12adc(void) {
-	chain_command_complete_return(CHAIN_JOYSTICK_GET_12ADC,
-									  (uint8_t *)s_adc_12value_buf, 4);
+//	chain_command_complete_return(CHAIN_JOYSTICK_GET_12ADC,
+//									  (uint8_t *)s_adc_12value_buf, 4);
+	usart1_transmit_dma((uint8_t *)s_adc_12value_buf, 4);
 }
 
 void chain_joystick_get_8adc(void) {

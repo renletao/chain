@@ -1,7 +1,2 @@
-../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_tim.h:2494:22:LL_TIM_OC_DisableFast	0	static
-../Core/Src/tim.c:30:6:MX_TIM1_Init	200	static
-../Core/Src/tim.c:131:6:MX_TIM3_Init	56	static
-../Core/Src/tim.c:175:6:MX_TIM14_Init	40	static,ignoring_inline_asm
-../Core/Src/tim.c:206:6:MX_TIM16_Init	40	static,ignoring_inline_asm
-../Core/Src/tim.c:238:6:HAL_TIM_Encoder_MspInit	40	static
-../Core/Src/tim.c:269:6:HAL_TIM_Encoder_MspDeInit	8	static
+../Core/Src/tim.c:28:6:MX_TIM14_Init	40	static,ignoring_inline_asm
+../Core/Src/tim.c:59:6:MX_TIM16_Init	40	static,ignoring_inline_asm
