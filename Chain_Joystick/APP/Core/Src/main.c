@@ -88,6 +88,9 @@ __IO uint16_t g_device_type = (uint8_t)(
     PRODUCT_TYPE_LOW);    // Combined product type from high and low bytes
 __IO uint8_t g_light = 0; // Light status or value
 
+
+//
+extern __IO uint64_t g_flash_data[3];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -129,7 +132,7 @@ void iap_set(void) {
 void chain_init(void) {
   // Get the version of the bootloader
   g_bootloader_version = get_bootloader_version();
-
+  read_flash();
   // Check if the RGB light setting is set to maximum (0xFF)
   if (get_rgb_light() == 0xFF) {
     // Set the light to a base color if it is maximum
@@ -139,6 +142,11 @@ void chain_init(void) {
     // Otherwise, get the current RGB light setting
     g_light = get_rgb_light();
   }
+  if(g_flash_data[1] == 0xFFFFFFFF && g_flash_data[2] == 0xFFFFFFFF){
+
+  }else{
+
+  }
 }
 /* USER CODE END 0 */
 
@@ -146,7 +154,8 @@ void chain_init(void) {
   * @brief  The application entry point.
   * @retval int
   */
-int main(void) {
+int main(void)
+{
 
   /* USER CODE BEGIN 1 */
   iap_set();
@@ -155,8 +164,7 @@ int main(void) {
 
   /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick.
-   */
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
   /* USER CODE BEGIN Init */
@@ -193,8 +201,8 @@ int main(void) {
   while (1) {
     if (g_cmd_status == CMD_SPACE_BUSY_STATUS) {
       switch (g_cmd_buf[0]) {
-      case CHAIN_JOYSTICK_GET_12ADC:
-        chain_joystick_get_12adc();
+      case CHAIN_JOYSTICK_GET_16ADC:
+        chain_joystick_get_16adc();
         break;
       case CHAIN_JOYSTICK_GET_8ADC:
         chain_joystick_get_8adc();
@@ -206,8 +214,8 @@ int main(void) {
         chain_joystick_set_adc_xy_mapped_range((uint8_t *)(g_cmd_buf + 1),
                                                (g_cmd_size - 1));
         break;
-      case CHAIN_JOYSTICK_GET_ADC_XY_MAPPED_INT12_VALUE:
-        chain_joystick_get_adc_xy_mapped_int12_value();
+      case CHAIN_JOYSTICK_GET_ADC_XY_MAPPED_INT16_VALUE:
+        chain_joystick_get_adc_xy_mapped_int16_value();
         break;
       case CHAIN_JOYSTICK_GET_ADC_XY_MAPPED_INT8_VALUE:
         chain_joystick_get_adc_xy_mapped_int8_value();
@@ -253,7 +261,8 @@ int main(void) {
   * @brief System Clock Configuration
   * @retval None
   */
-void SystemClock_Config(void) {
+void SystemClock_Config(void)
+{
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
@@ -264,8 +273,7 @@ void SystemClock_Config(void) {
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType =
-      RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_LSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -277,19 +285,21 @@ void SystemClock_Config(void) {
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV4;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
     Error_Handler();
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
   */
-  RCC_ClkInitStruct.ClockType =
-      RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1;
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  {
     Error_Handler();
   }
 }
@@ -302,7 +312,8 @@ void SystemClock_Config(void) {
   * @brief  This function is executed in case of error occurrence.
   * @retval None
   */
-void Error_Handler(void) {
+void Error_Handler(void)
+{
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
@@ -311,7 +322,7 @@ void Error_Handler(void) {
   /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef USE_FULL_ASSERT
+#ifdef  USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -319,7 +330,8 @@ void Error_Handler(void) {
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t *file, uint32_t line) {
+void assert_failed(uint8_t *file, uint32_t line)
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line
      number,

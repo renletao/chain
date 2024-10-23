@@ -47,7 +47,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  C:/Users/15191/Desktop/chain/Chain_Tof/APP/Core/RGB/RGB.h \
  C:/Users/15191/Desktop/chain/Chain_Tof/APP/Core/flash/myflash.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h \
- C:/Users/15191/Desktop/chain/Chain_Tof/APP/Core/VL53L0X/Inc/VL53L0X.h
+ C:/Users/15191/Desktop/chain/Chain_Tof/APP/Drivers/VL53L0X/Inc/VL53L0X.h
 ../Core/Inc/main.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h:
 ../Core/Inc/stm32g0xx_hal_conf.h:
@@ -101,4 +101,4 @@ C:/Users/15191/Desktop/chain/Chain_Tof/APP/Core/Chain_Function/base_function.h:
 C:/Users/15191/Desktop/chain/Chain_Tof/APP/Core/RGB/RGB.h:
 C:/Users/15191/Desktop/chain/Chain_Tof/APP/Core/flash/myflash.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h:
-C:/Users/15191/Desktop/chain/Chain_Tof/APP/Core/VL53L0X/Inc/VL53L0X.h:
+C:/Users/15191/Desktop/chain/Chain_Tof/APP/Drivers/VL53L0X/Inc/VL53L0X.h:

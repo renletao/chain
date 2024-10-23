@@ -23,10 +23,13 @@ extern "C" {
 #define RGB_LIGHT_ADDR (STM32G0xx_FLASH_PAGE24_STARTADDR + 1)            // Address for RGB light data
 #define BOOTLOADER_VERSION_ADDR (APPLICATION_ADDRESS - 1)                 // Address for bootloader version
 
+void read_flash(void);
+void write_flash(void);
 bool set_rgb_light(uint8_t data);                                        // Set RGB light with specified data
 uint8_t get_rgb_light(void);                                             // Get current RGB light value
 uint8_t get_bootloader_version(void);                                    // Get bootloader version
-
+bool set_map_range_light(uint16_t *buffer,uint16_t size);
+uint8_t get_map_range_light(void);
 
 #ifdef __cplusplus
 }

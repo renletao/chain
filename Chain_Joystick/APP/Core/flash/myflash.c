@@ -1,5 +1,7 @@
 #include "myflash.h"
 
+__IO uint64_t g_flash_data[3] = {0};
+
 /**
  * @brief Get the page number based on the address.
  * @note This function calculates the page number by determining how far
@@ -92,6 +94,19 @@ static bool my_flash_write_double_word(uint32_t address, uint64_t data)
     return (status == HAL_OK); // Return success status
 }
 
+void read_flash(void){
+	for(uint8_t i =0;i<3;i++){
+		g_flash_data[i] = my_flash_read_double_word((STM32G0xx_FLASH_PAGE24_STARTADDR + i*8));
+	}
+}
+void write_flash(void){
+	my_flash_earse_pages(STM32G0xx_FLASH_PAGE24_STARTADDR); // Erase the flash page
+	for(uint8_t i = 0;i<3;i++){
+		while (!my_flash_write_double_word((STM32G0xx_FLASH_PAGE24_STARTADDR + i*8), g_flash_data[i]))
+	    {
+	    }
+	}
+}
 /**
  * @brief Modify the brightness of the RGB light.
  * @note This function reads the current state of the RGB light data,
@@ -103,15 +118,9 @@ static bool my_flash_write_double_word(uint32_t address, uint64_t data)
  */
 bool set_rgb_light(uint8_t data)
 {
-    uint64_t temp = my_flash_read_double_word(STM32G0xx_FLASH_PAGE24_STARTADDR); // Read current RGB light data
-    set_byte_in_uint64(&temp, 1, data); // Modify the brightness byte
+    set_byte_in_uint64(&g_flash_data[0], 1, data); // Modify the brightness byte
     my_flash_earse_pages(STM32G0xx_FLASH_PAGE24_STARTADDR); // Erase the flash page
-
-    // Attempt to write the modified data back to flash until successful
-    while (!my_flash_write_double_word(STM32G0xx_FLASH_PAGE24_STARTADDR, temp))
-    {
-    }
-    
+    write_flash();
     // Verify if the new brightness value has been successfully set
     return (get_rgb_light() == data);
 }

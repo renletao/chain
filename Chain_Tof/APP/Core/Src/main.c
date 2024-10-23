@@ -30,8 +30,9 @@
 #include "base_function.h"
 #include "RGB.h"
 #include "myflash.h"
-#include "VL53L0X.h"
 #include "stdio.h"
+#include "VL53L0X.h"
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -125,6 +126,11 @@ void chain_init(void)
         g_light = get_rgb_light();
     }
 }
+
+uint8_t strbuf[55]; // for UART output via sprintf()
+uint16_t makeuint16(int lsb, int msb) {
+    return ((msb & 0xFF) << 8) | (lsb & 0xFF);
+}
 /* USER CODE END 0 */
 
 /**
@@ -168,23 +174,57 @@ int main(void)
   rgb_init();
   LL_TIM_EnableIT_UPDATE(TIM14); // ENABLE TIM14
   LL_TIM_EnableCounter(TIM14);   // ENABLE TIM14
+  uint8_t i;
+   	for (i=1; i<128; i++)
+   	{
+   	  /*
+   	   * the HAL wants a left aligned i2c address
+   	   * &hi2c1 is the handle
+   	   * (uint16_t)(i<<1) is the i2c address left aligned
+   	   * retries 2
+   	   * timeout 2
+  		i2c address:（0x78 = 0x3c << 1）
+   	   */
+   		HAL_StatusTypeDef result = HAL_I2C_IsDeviceReady(&hi2c2, (uint16_t)(i<<1), 2, 2);
+   	  if (result != HAL_OK) // HAL_ERROR or HAL_BUSY or HAL_TIMEOUT
+   	  {
 
-  statInfo_t_VL53L0X distanceStr;
-  initVL53L0X(1, &hi2c2);
-  setSignalRateLimit(200);
-  setVcselPulsePeriod(VcselPeriodPreRange, 10);
-  setVcselPulsePeriod(VcselPeriodFinalRange, 14);
-  setMeasurementTimingBudget(300 * 1000UL);
-  uint16_t distance = 0;
+   	  }
+   	  if (result == HAL_OK)
+   	  {
+   		  usart1_transmit_dma(&i, 1);
+   	  }
+   	}
+   	uint8_t buffer1 = 0x02;
+   	HAL_StatusTypeDef status = HAL_I2C_Mem_Write(&hi2c2, (0x29<<1), 0x00, I2C_MEMADD_SIZE_8BIT, (uint8_t *)&buffer1, 1, 1000);
+   	if( status == HAL_OK ){
+		sprintf((char*) strbuf, "write successful\n");
+		usart1_transmit_dma( strbuf, strlen( (char*)strbuf ));
+	} else {
+		sprintf((char*) strbuf, "write error");
+		usart1_transmit_dma( strbuf, strlen( (char*)strbuf ));
+	}
+   	uint8_t buffer[12] = {0};
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		distance = readRangeSingleMillimeters(&distanceStr);
-		usart1_transmit_dma((uint8_t*) &distance, 2);
-		HAL_Delay(500);
+	  HAL_StatusTypeDef status = HAL_I2C_Mem_Read(&hi2c2, (0x29<<1),0x14,I2C_MEMADD_SIZE_8BIT, (uint8_t *)buffer, 12, 1000);
+	  if( status == HAL_OK ){
+	  		sprintf((char*) strbuf, "read successful\n");
+	  		usart1_transmit_dma( strbuf, strlen( (char*)strbuf ));
+	  	} else {
+	  		sprintf((char*) strbuf, "read error");
+	  		usart1_transmit_dma( strbuf, strlen( (char*)strbuf ));
+	  	}
+	  HAL_Delay(40);
+	  uint16_t dist = makeuint16(buffer[11], buffer[10]);
+	  sprintf((char*)strbuf,"%d mm \n",dist);
+	  usart1_transmit_dma( strbuf, strlen( (char*)strbuf ));
+//	  usart1_transmit_dma( buffer, 12);
+		HAL_Delay(1000);
 //    if (g_cmd_status == CMD_SPACE_BUSY_STATUS)
 //    {
 //      switch (g_cmd_buf[0])

@@ -28,7 +28,7 @@ Core/Chain_Function \
 Core/RGB \
 Core/Src \
 Core/Startup \
-Core/VL53L0X/Src \
 Core/flash \
 Drivers/STM32G0xx_HAL_Driver/Src \
+Drivers/VL53L0X/Src \
 

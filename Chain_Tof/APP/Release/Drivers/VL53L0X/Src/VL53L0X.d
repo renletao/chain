@@ -1,8 +1,5 @@
-Core/VL53L0X/Src/VL53L0X.o: ../Core/VL53L0X/Src/VL53L0X.c \
- ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h \
- ../Core/Inc/stm32g0xx_hal_conf.h \
- ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_rcc.h \
- ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_def.h \
+Drivers/VL53L0X/Src/VL53L0X.o: ../Drivers/VL53L0X/Src/VL53L0X.c \
+ C:/Users/15191/Desktop/chain/Chain_Tof/APP/Drivers/VL53L0X/Inc/VL53L0X.h \
  ../Drivers/CMSIS/Device/ST/STM32G0xx/Include/stm32g0xx.h \
  ../Drivers/CMSIS/Device/ST/STM32G0xx/Include/stm32g031xx.h \
  ../Drivers/CMSIS/Include/core_cm0plus.h \
@@ -11,6 +8,10 @@ Core/VL53L0X/Src/VL53L0X.o: ../Core/VL53L0X/Src/VL53L0X.c \
  ../Drivers/CMSIS/Include/cmsis_gcc.h \
  ../Drivers/CMSIS/Include/mpu_armv7.h \
  ../Drivers/CMSIS/Device/ST/STM32G0xx/Include/system_stm32g0xx.h \
+ ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h \
+ ../Core/Inc/stm32g0xx_hal_conf.h \
+ ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_rcc.h \
+ ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_def.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_rcc.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_rcc_ex.h \
@@ -27,12 +28,8 @@ Core/VL53L0X/Src/VL53L0X.o: ../Core/VL53L0X/Src/VL53L0X.c \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_i2c.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_i2c_ex.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr.h \
- ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr_ex.h \
- C:/Users/15191/Desktop/chain/Chain_Tof/APP/Core/VL53L0X/Inc/VL53L0X.h
-../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h:
-../Core/Inc/stm32g0xx_hal_conf.h:
-../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_rcc.h:
-../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_def.h:
+ ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr_ex.h
+C:/Users/15191/Desktop/chain/Chain_Tof/APP/Drivers/VL53L0X/Inc/VL53L0X.h:
 ../Drivers/CMSIS/Device/ST/STM32G0xx/Include/stm32g0xx.h:
 ../Drivers/CMSIS/Device/ST/STM32G0xx/Include/stm32g031xx.h:
 ../Drivers/CMSIS/Include/core_cm0plus.h:
@@ -41,6 +38,10 @@ Core/VL53L0X/Src/VL53L0X.o: ../Core/VL53L0X/Src/VL53L0X.c \
 ../Drivers/CMSIS/Include/cmsis_gcc.h:
 ../Drivers/CMSIS/Include/mpu_armv7.h:
 ../Drivers/CMSIS/Device/ST/STM32G0xx/Include/system_stm32g0xx.h:
+../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h:
+../Core/Inc/stm32g0xx_hal_conf.h:
+../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_rcc.h:
+../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_def.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_rcc.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_rcc_ex.h:
@@ -58,4 +59,3 @@ Core/VL53L0X/Src/VL53L0X.o: ../Core/VL53L0X/Src/VL53L0X.c \
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_i2c_ex.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_pwr_ex.h:
-C:/Users/15191/Desktop/chain/Chain_Tof/APP/Core/VL53L0X/Inc/VL53L0X.h:
