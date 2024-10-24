@@ -88,9 +88,15 @@ __IO uint16_t g_device_type = (uint8_t)(
     PRODUCT_TYPE_LOW);    // Combined product type from high and low bytes
 __IO uint8_t g_light = 0; // Light status or value
 
+__IO static uint16_t s_adc_map_range_df_value[8] =
+    MAP_RANGE_DEFAULT; // Default values for ADC mapping range
 
-//
-extern __IO uint64_t g_flash_data[3];
+extern __IO uint16_t g_flash_data[12]; // Data read from Flash memory
+extern __IO uint16_t
+    g_adc_map_range_value[8]; // Current ADC mapping range values
+extern adc_cal_t
+    g_adc_cal_value; // Structure for storing ADC calibration values
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -132,30 +138,41 @@ void iap_set(void) {
 void chain_init(void) {
   // Get the version of the bootloader
   g_bootloader_version = get_bootloader_version();
-  read_flash();
-  // Check if the RGB light setting is set to maximum (0xFF)
-  if (get_rgb_light() == 0xFF) {
-    // Set the light to a base color if it is maximum
-    g_light = RGB_LIGHT_BASE;
-    set_rgb_light(g_light);
+
+  // Read data from Flash memory
+  read_flash_data();
+
+  // Set RGB light based on the current setting
+  g_light = (get_rgb_light() == 0xFF) ? RGB_LIGHT_BASE : get_rgb_light();
+  set_rgb_light(g_light); // Set the RGB light to the determined value
+  // Check if any value in the last 4 Flash data is valid
+  uint8_t valid_data_found = 0;
+  for (uint8_t i = 0; i < 4; i++) {
+    if (g_flash_data[i + 4] != 0xFFFF) {
+      valid_data_found = 1; // Valid data found
+      break;
+    }
+  }
+
+  // If valid data exists, update mapping range and ADC calibration
+  if (valid_data_found) {
+    get_map_range(g_adc_map_range_value, sizeof(g_adc_map_range_value));
   } else {
-    // Otherwise, get the current RGB light setting
-    g_light = get_rgb_light();
+    // If all values are 0xFFFF, use default ADC mapping range values
+    memcpy(g_adc_map_range_value, s_adc_map_range_df_value,
+           sizeof(g_adc_map_range_value));
+    set_map_range(g_adc_map_range_value, sizeof(g_adc_map_range_value));
   }
-  if(g_flash_data[1] == 0xFFFFFFFF && g_flash_data[2] == 0xFFFFFFFF){
-
-  }else{
-
-  }
+  // Update ADC calibration values regardless of the valid data state
+  update_adc_cal_value();
 }
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
-{
+ * @brief  The application entry point.
+ * @retval int
+ */
+int main(void) {
 
   /* USER CODE BEGIN 1 */
   iap_set();
@@ -164,7 +181,8 @@ int main(void)
 
   /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick.
+   */
   HAL_Init();
 
   /* USER CODE BEGIN Init */
@@ -258,22 +276,22 @@ int main(void)
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
-{
+ * @brief System Clock Configuration
+ * @retval None
+ */
+void SystemClock_Config(void) {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
-  */
+   */
   HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
+   * in the RCC_OscInitTypeDef structure.
+   */
+  RCC_OscInitStruct.OscillatorType =
+      RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_LSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -285,21 +303,19 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV4;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
     Error_Handler();
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1;
+   */
+  RCC_ClkInitStruct.ClockType =
+      RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-  {
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {
     Error_Handler();
   }
 }
@@ -309,11 +325,10 @@ void SystemClock_Config(void)
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
-{
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
+void Error_Handler(void) {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
@@ -322,7 +337,7 @@ void Error_Handler(void)
   /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -330,8 +345,7 @@ void Error_Handler(void)
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t *file, uint32_t line)
-{
+void assert_failed(uint8_t *file, uint32_t line) {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line
      number,

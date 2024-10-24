@@ -1,218 +1,396 @@
 #include "joystick_function.h"
 #include <stdio.h>
 
-__IO static uint32_t s_last_interrupt_time = 0; // Last interrupt time
-__IO static uint16_t s_adc_16value_buf[ADC_CHANNEL_NUMS] = { 0 };
-__IO static uint8_t s_adc_8value_buf[ADC_CHANNEL_NUMS] = { 0 };
-__IO static uint32_t s_adc_collect_buf[ADC_CHANNEL_NUMS] = { 0 };
-__IO static uint16_t s_adc_map_range_value[8] = MAP_RANGE_DEFAULT;
-__IO static int16_t s_adc_map_16value[ADC_CHANNEL_NUMS] = { 0 };
-__IO static int8_t s_adc_map_8value[ADC_CHANNEL_NUMS] = { 0 };
+__IO static uint32_t s_last_interrupt_time =
+    0; // Last interrupt time (in milliseconds)
+__IO static uint16_t s_adc_16value_buf[ADC_CHANNEL_NUMS] = {
+    0}; // Buffer for 16-bit ADC values
+__IO static uint8_t s_adc_8value_buf[ADC_CHANNEL_NUMS] = {
+    0}; // Buffer for 8-bit ADC values
+__IO static uint32_t s_adc_collect_buf[ADC_CHANNEL_NUMS] = {
+    0}; // Buffer for collecting raw ADC values
+__IO uint16_t g_adc_map_range_value[8] = {
+    0}; // Global mapped range values for ADC
+__IO static int16_t s_adc_map_16value[ADC_CHANNEL_NUMS] = {
+    0}; // Buffer for mapped 16-bit ADC values
+__IO static int8_t s_adc_map_8value[ADC_CHANNEL_NUMS] = {
+    0}; // Buffer for mapped 8-bit ADC values
 
-#ifdef DEBUG
-static uint8_t s_ret_buf[256] = { 0 };
+#if DEBUG
+static uint8_t s_ret_buf[256] = {0}; // Return buffer size for debug mode
 #else
-static uint8_t s_ret_buf[12] = { 0 };
+static uint8_t s_ret_buf[12] = {0}; // Return buffer size for normal mode
 #endif
 
-static uint8_t s_ret_buf_size = 0;
-static adc_cal_t s_adc_cal_value = MAP_RANGE_DEFAULT;
+static uint8_t s_ret_buf_size = 0; // Size of the return buffer
+adc_cal_t g_adc_cal_value = {0};   // Global ADC calibration values
 
-static uint8_t s_key_status = 0; // s_key_status is a static variable to hold
-// the current status of the key press
+static uint8_t s_key_status = 0; // Status of the joystick key/button
 
+/**
+ * @brief Maps a number from one range to another.
+ * @note This function takes a value 'x' and maps it from the input range
+ *       defined by 'in_min' and 'in_max' to the output range defined by
+ *       'out_min' and 'out_max'.
+ *
+ * @param x The value to map.
+ * @param in_min The lower bound of the input range.
+ * @param in_max The upper bound of the input range.
+ * @param out_min The lower bound of the output range.
+ * @param out_max The upper bound of the output range.
+ * @retval The mapped value within the output range.
+ */
 long map(long x, long in_min, long in_max, long out_min, long out_max) {
-	long result;
-	result = (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-	if (result < out_min)
-		result = out_min;
-	else if (result > out_max)
-		result = out_max;
+  long result;
 
-	return result;
+  // Perform the mapping calculation
+  result = (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+
+  // Clamp the result to ensure it's within the output range
+  if (result < out_min) {
+    result = out_min; // Set to out_min if below range
+  } else if (result > out_max) {
+    result = out_max; // Set to out_max if above range
+  }
+
+  return result; // Return the mapped value
 }
+
+/**
+ * @brief Updates the ADC calibration values based on the current mapped range.
+ * @note This function retrieves the current mapped range values from
+ *       'g_adc_map_range_value' and updates the corresponding fields
+ *       in the global ADC calibration structure 'g_adc_cal_value'.
+ *
+ * @param None
+ * @retval None
+ */
 void update_adc_cal_value(void) {
-	s_adc_cal_value.x_negative_min_adc_16bits = s_adc_map_range_value[0];
-	s_adc_cal_value.x_negative_max_adc_16bits = s_adc_map_range_value[1];
-	s_adc_cal_value.x_positive_min_adc_16bits = s_adc_map_range_value[2];
-	s_adc_cal_value.x_positive_max_adc_16bits = s_adc_map_range_value[3];
-	s_adc_cal_value.y_negative_min_adc_16bits = s_adc_map_range_value[4];
-	s_adc_cal_value.y_negative_max_adc_16bits = s_adc_map_range_value[5];
-	s_adc_cal_value.y_positive_min_adc_16bits = s_adc_map_range_value[6];
-	s_adc_cal_value.y_positive_max_adc_16bits = s_adc_map_range_value[7];
+  // Update the ADC calibration values from the mapped range
+  g_adc_cal_value.x_negative_min_adc_16bits = g_adc_map_range_value[0];
+  g_adc_cal_value.x_negative_max_adc_16bits = g_adc_map_range_value[1];
+  g_adc_cal_value.x_positive_min_adc_16bits = g_adc_map_range_value[2];
+  g_adc_cal_value.x_positive_max_adc_16bits = g_adc_map_range_value[3];
+  g_adc_cal_value.y_negative_min_adc_16bits = g_adc_map_range_value[4];
+  g_adc_cal_value.y_negative_max_adc_16bits = g_adc_map_range_value[5];
+  g_adc_cal_value.y_positive_min_adc_16bits = g_adc_map_range_value[6];
+  g_adc_cal_value.y_positive_max_adc_16bits = g_adc_map_range_value[7];
 }
+
+/**
+ * @brief ADC conversion complete callback.
+ * @note This function is called when the ADC conversion is complete.
+ *       It updates the ADC values and maps them based on the calibration
+ * values.
+ *
+ * @param hadc Pointer to the ADC handle.
+ * @retval None
+ */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
-	HAL_ADC_Stop_DMA(hadc);
-	// update adc value
-	for (uint8_t i = 0; i < ADC_CHANNEL_NUMS; i++) {
-		s_adc_16value_buf[i] = s_adc_collect_buf[i];
-		s_adc_8value_buf[i] = map(s_adc_16value_buf[i], 0, 65535, 0, 255);
-	}
-	// map x
-	if (s_adc_16value_buf[AXIS_X]
-			<= s_adc_cal_value.x_negative_max_adc_16bits) {
-		s_adc_map_16value[AXIS_X] = map(s_adc_16value_buf[AXIS_X],
-				s_adc_cal_value.x_negative_min_adc_16bits,
-				s_adc_cal_value.x_negative_max_adc_16bits, -4095, 0);
-		s_adc_map_8value[AXIS_X] = map(s_adc_16value_buf[AXIS_X],
-				s_adc_cal_value.x_negative_min_adc_16bits,
-				s_adc_cal_value.x_negative_max_adc_16bits, -127, 0);
-	} else if (s_adc_16value_buf[AXIS_X]
-			>= s_adc_cal_value.x_positive_min_adc_16bits) {
-		s_adc_map_16value[AXIS_X] = map(s_adc_16value_buf[AXIS_X],
-				s_adc_cal_value.x_positive_min_adc_16bits,
-				s_adc_cal_value.x_positive_max_adc_16bits, 0, 4095);
-		s_adc_map_8value[AXIS_X] = map(s_adc_16value_buf[AXIS_X],
-				s_adc_cal_value.x_positive_min_adc_16bits,
-				s_adc_cal_value.x_positive_max_adc_16bits, 0, 127);
-	} else {
-		s_adc_map_16value[AXIS_X] = 0;
-		s_adc_map_8value[AXIS_X] = 0;
-	}
+  HAL_ADC_Stop_DMA(hadc); // Stop DMA transfer
 
-	// map y
-	if (s_adc_16value_buf[AXIS_Y]
-			<= s_adc_cal_value.y_negative_max_adc_16bits) {
-		s_adc_map_16value[AXIS_Y] = map(s_adc_16value_buf[AXIS_Y],
-				s_adc_cal_value.y_negative_min_adc_16bits,
-				s_adc_cal_value.y_negative_max_adc_16bits, -4095, 0);
-		s_adc_map_8value[AXIS_Y] = map(s_adc_16value_buf[AXIS_Y],
-				s_adc_cal_value.y_negative_min_adc_16bits,
-				s_adc_cal_value.y_negative_max_adc_16bits, -127, 0);
-	} else if (s_adc_16value_buf[AXIS_Y]
-			>= s_adc_cal_value.y_positive_min_adc_16bits) {
-		s_adc_map_16value[AXIS_Y] = map(s_adc_16value_buf[AXIS_Y],
-				s_adc_cal_value.y_positive_min_adc_16bits,
-				s_adc_cal_value.y_positive_max_adc_16bits, 0, 4095);
-		s_adc_map_8value[AXIS_Y] = map(s_adc_16value_buf[AXIS_Y],
-				s_adc_cal_value.y_positive_min_adc_16bits,
-				s_adc_cal_value.y_positive_max_adc_16bits, 0, 127);
-	} else {
-		s_adc_map_16value[AXIS_Y] = 0;
-		s_adc_map_8value[AXIS_Y] = 0;
-	}
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) s_adc_collect_buf, ADC_CHANNEL_NUMS);
+  // Update ADC values from the collected buffer
+  for (uint8_t i = 0; i < ADC_CHANNEL_NUMS; i++) {
+    s_adc_16value_buf[i] = s_adc_collect_buf[i]; // Copy raw ADC values
+    s_adc_8value_buf[i] =
+        map(s_adc_16value_buf[i], 0, 65535, 0, 255); // Map to 8-bit value
+  }
+
+  // Map X-axis values
+  if (s_adc_16value_buf[AXIS_X] <= g_adc_cal_value.x_negative_max_adc_16bits) {
+    s_adc_map_16value[AXIS_X] = map(
+        s_adc_16value_buf[AXIS_X], g_adc_cal_value.x_negative_min_adc_16bits,
+        g_adc_cal_value.x_negative_max_adc_16bits, -4095, 0);
+    s_adc_map_8value[AXIS_X] = map(
+        s_adc_16value_buf[AXIS_X], g_adc_cal_value.x_negative_min_adc_16bits,
+        g_adc_cal_value.x_negative_max_adc_16bits, -127, 0);
+  } else if (s_adc_16value_buf[AXIS_X] >=
+             g_adc_cal_value.x_positive_min_adc_16bits) {
+    s_adc_map_16value[AXIS_X] = map(
+        s_adc_16value_buf[AXIS_X], g_adc_cal_value.x_positive_min_adc_16bits,
+        g_adc_cal_value.x_positive_max_adc_16bits, 0, 4095);
+    s_adc_map_8value[AXIS_X] = map(
+        s_adc_16value_buf[AXIS_X], g_adc_cal_value.x_positive_min_adc_16bits,
+        g_adc_cal_value.x_positive_max_adc_16bits, 0, 127);
+  } else {
+    s_adc_map_16value[AXIS_X] = 0; // Default value if out of range
+    s_adc_map_8value[AXIS_X] = 0;  // Default value if out of range
+  }
+
+  // Map Y-axis values
+  if (s_adc_16value_buf[AXIS_Y] <= g_adc_cal_value.y_negative_max_adc_16bits) {
+    s_adc_map_16value[AXIS_Y] = map(
+        s_adc_16value_buf[AXIS_Y], g_adc_cal_value.y_negative_min_adc_16bits,
+        g_adc_cal_value.y_negative_max_adc_16bits, -4095, 0);
+    s_adc_map_8value[AXIS_Y] = map(
+        s_adc_16value_buf[AXIS_Y], g_adc_cal_value.y_negative_min_adc_16bits,
+        g_adc_cal_value.y_negative_max_adc_16bits, -127, 0);
+  } else if (s_adc_16value_buf[AXIS_Y] >=
+             g_adc_cal_value.y_positive_min_adc_16bits) {
+    s_adc_map_16value[AXIS_Y] = map(
+        s_adc_16value_buf[AXIS_Y], g_adc_cal_value.y_positive_min_adc_16bits,
+        g_adc_cal_value.y_positive_max_adc_16bits, 0, 4095);
+    s_adc_map_8value[AXIS_Y] = map(
+        s_adc_16value_buf[AXIS_Y], g_adc_cal_value.y_positive_min_adc_16bits,
+        g_adc_cal_value.y_positive_max_adc_16bits, 0, 127);
+  } else {
+    s_adc_map_16value[AXIS_Y] = 0; // Default value if out of range
+    s_adc_map_8value[AXIS_Y] = 0;  // Default value if out of range
+  }
+
+  // Restart ADC DMA for the next conversion
+  HAL_ADC_Start_DMA(hadc, (uint32_t *)s_adc_collect_buf, ADC_CHANNEL_NUMS);
 }
 
+/**
+ * @brief Initializes the joystick and ADC.
+ * @note This function starts the ADC calibration and initiates DMA for ADC
+ * conversion.
+ *
+ * @param None
+ * @retval None
+ */
 void joystick_init(void) {
-	HAL_ADCEx_Calibration_Start(&hadc1);
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) s_adc_collect_buf, ADC_CHANNEL_NUMS);
+  HAL_ADCEx_Calibration_Start(&hadc1); // Start ADC calibration
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)s_adc_collect_buf,
+                    ADC_CHANNEL_NUMS); // Start ADC with DMA
 }
 
+/**
+ * @brief Sends the 16-bit ADC values for the joystick.
+ * @note This function either transmits the ADC values over USART in debug mode
+ *       or returns them through a command completion callback in normal mode.
+ *
+ * @param None
+ * @retval None
+ */
 void chain_joystick_get_16adc(void) {
-#ifdef DEBUG
-	s_ret_buf[0] = '\0';
-	sprintf(s_ret_buf, "x_16adc: %d   y_16adc: %d\n", s_adc_16value_buf[0],
-			s_adc_16value_buf[1]);
-	usart1_transmit_dma((uint8_t*) s_ret_buf, strlen(s_ret_buf));
+#if DEBUG
+  // Clear the return buffer
+  s_ret_buf[0] = '\0';
+
+  // Format the 16-bit ADC values into the return buffer
+  sprintf(s_ret_buf, "x_16adc: %d   y_16adc: %d\n", s_adc_16value_buf[0],
+          s_adc_16value_buf[1]);
+
+  // Transmit the formatted string via USART
+  usart1_transmit_dma((uint8_t *)s_ret_buf, strlen(s_ret_buf));
 #else
-    chain_command_complete_return(CHAIN_JOYSTICK_GET_16ADC,
-                                    (uint8_t *)s_adc_16value_buf, 4);
+  // Return the ADC values through a command completion callback
+  chain_command_complete_return(CHAIN_JOYSTICK_GET_16ADC,
+                                (uint8_t *)s_adc_16value_buf, 4);
 #endif
 }
 
+/**
+ * @brief Sends the 8-bit ADC values for the joystick.
+ * @note This function either transmits the ADC values over USART in debug mode
+ *       or returns them through a command completion callback in normal mode.
+ *
+ * @param None
+ * @retval None
+ */
 void chain_joystick_get_8adc(void) {
-#ifdef DEBUG
-	s_ret_buf[0] = '\0';
-	sprintf(s_ret_buf, "x_8adc: %d   y_8adc: %d\n", s_adc_8value_buf[0],
-			s_adc_8value_buf[1]);
-	usart1_transmit_dma((uint8_t*) s_ret_buf, strlen(s_ret_buf));
+#if DEBUG
+  // Clear the return buffer
+  s_ret_buf[0] = '\0';
+
+  // Format the 8-bit ADC values into the return buffer
+  sprintf(s_ret_buf, "x_8adc: %d   y_8adc: %d\n", s_adc_8value_buf[0],
+          s_adc_8value_buf[1]);
+
+  // Transmit the formatted string via USART
+  usart1_transmit_dma((uint8_t *)s_ret_buf, strlen(s_ret_buf));
 #else
-    chain_command_complete_return(CHAIN_JOYSTICK_GET_8ADC,
-                                   (uint8_t *)s_adc_8value_buf, 2);
+  // Return the ADC values through a command completion callback
+  chain_command_complete_return(CHAIN_JOYSTICK_GET_8ADC,
+                                (uint8_t *)s_adc_8value_buf, 2);
 #endif
 }
 
+/**
+ * @brief Sends the mapped range values for the ADC.
+ * @note This function either transmits the mapped range values over USART in
+ * debug mode
+ *       or returns them through a command completion callback in normal mode.
+ *
+ * @param None
+ * @retval None
+ */
 void chain_joystick_get_adc_xy_mapped_range(void) {
-#ifdef DEBUG
-	s_ret_buf[0] = '\0';
-	sprintf(s_ret_buf, "mapped_range");
-	for (uint8_t i = 0; i < 8; i++) {
-		uint8_t temp[10];
-		sprintf(temp, "%d ", s_adc_map_range_value[i]);
-		strcat(s_ret_buf, temp);  // 将每个元素追加到buffer中
-	}
-	usart1_transmit_dma((uint8_t*) s_ret_buf, strlen(s_ret_buf));
+#if DEBUG
+  // Clear the return buffer
+  s_ret_buf[0] = '\0';
+
+  // Start building the mapped range string
+  sprintf(s_ret_buf, "mapped_range: ");
+
+  // Append each mapped range value to the return buffer
+  for (uint8_t i = 0; i < 8; i++) {
+    char temp[10]; // Temporary buffer for each value
+    sprintf(temp, "%d ", g_adc_map_range_value[i]);
+    strcat(s_ret_buf, temp); // Append the value to the main buffer
+  }
+
+  // Transmit the formatted string via USART
+  usart1_transmit_dma((uint8_t *)s_ret_buf, strlen(s_ret_buf));
 #else
-    chain_command_complete_return(CHAIN_JOYSTICK_GET_ADC_XY_MAPPED_RANGE,
-                                    (uint8_t *)s_adc_map_range_value, 16);
+  // Return the mapped range values through a command completion callback
+  chain_command_complete_return(CHAIN_JOYSTICK_GET_ADC_XY_MAPPED_RANGE,
+                                (uint8_t *)g_adc_map_range_value, 16);
 #endif
 }
 
+/**
+ * @brief Sets the ADC mapped range for the joystick.
+ * @note This function updates the global mapped range values based on the
+ * provided buffer.
+ *       If the size is 16 bytes, the mapping is successful; otherwise, it
+ * indicates an error.
+ *
+ * @param buffer Pointer to the buffer containing the new mapped range values.
+ * @param size Size of the buffer.
+ * @retval None
+ */
 void chain_joystick_set_adc_xy_mapped_range(uint8_t *buffer, uint16_t size) {
-#ifdef DEBUG
-	s_ret_buf[0] = '\0';
-	if(size == 16){
-		sprintf(s_ret_buf, "set success\n");
-	}else{
-		sprintf(s_ret_buf, "set error\n");
-	}
-	usart1_transmit_dma((uint8_t*) s_ret_buf, strlen(s_ret_buf));
+#if DEBUG
+  // Clear the return buffer
+  s_ret_buf[0] = '\0';
+
+  // Check if the buffer size is correct
+  if (size == 16) {
+    for (uint8_t i = 0; i < 16; i += 2) {
+      g_adc_map_range_value[i / 2] =
+          ((uint16_t)buffer[i + 1] << 8) | (uint16_t)buffer[i];
+    }
+    update_adc_cal_value(); // Update calibration values
+    set_map_range(g_adc_map_range_value,
+                  sizeof(g_adc_map_range_value)); // Store in flash
+    sprintf(s_ret_buf, "set success\n");
+  } else {
+    sprintf(s_ret_buf, "set error\n");
+  }
+
+  // Transmit the status message via USART
+  usart1_transmit_dma((uint8_t *)s_ret_buf, strlen(s_ret_buf));
 #else
-    if (size == 16) {
-        for (uint8_t i = 0; i < 16; i += 2) {
-          s_adc_map_range_value[i / 2] =
-              ((uint16_t)buffer[i + 1] << 8) | (uint16_t)buffer[i];
-        }
-        update_adc_cal_value();
-        s_ret_buf_size = 0; // Reset response buffer size
-        s_ret_buf[s_ret_buf_size++] = OPERATION_SUCCESS; // Indicate success
-        chain_command_complete_return(CHAIN_JOYSTICK_SET_ADC_XY_MAPPED_RANGE,
-                                      s_ret_buf,
-                                      s_ret_buf_size); // Return success response
-      } else {
-        s_ret_buf_size = 0; // Reset response buffer size for failure
-        s_ret_buf[s_ret_buf_size++] = OPERATION_FAIL; // Indicate failure
-        chain_command_complete_return(CHAIN_JOYSTICK_SET_ADC_XY_MAPPED_RANGE,
-                                      s_ret_buf,
-                                      s_ret_buf_size); // Return failure response
-      }
+  // If the size is correct, update the mapped range values
+  if (size == 16) {
+    for (uint8_t i = 0; i < 16; i += 2) {
+      g_adc_map_range_value[i / 2] =
+          ((uint16_t)buffer[i + 1] << 8) | (uint16_t)buffer[i];
+    }
+    update_adc_cal_value(); // Update calibration values
+    set_map_range(g_adc_map_range_value,
+                  sizeof(g_adc_map_range_value)); // Store in flash
+
+    // Prepare success response
+    s_ret_buf_size = 0;
+    s_ret_buf[s_ret_buf_size++] = OPERATION_SUCCESS;
+    chain_command_complete_return(CHAIN_JOYSTICK_SET_ADC_XY_MAPPED_RANGE,
+                                  s_ret_buf, s_ret_buf_size);
+  } else {
+    // Prepare failure response
+    s_ret_buf_size = 0;
+    s_ret_buf[s_ret_buf_size++] = OPERATION_FAIL;
+    chain_command_complete_return(CHAIN_JOYSTICK_SET_ADC_XY_MAPPED_RANGE,
+                                  s_ret_buf, s_ret_buf_size);
+  }
 #endif
 }
 
+/**
+ * @brief Gets the mapped 16-bit ADC values for the joystick.
+ * @note This function either transmits the mapped values over USART in debug
+ * mode
+ *       or returns them through a command completion callback in normal mode.
+ *
+ * @param None
+ * @retval None
+ */
 void chain_joystick_get_adc_xy_mapped_int16_value(void) {
-#ifdef DEBUG
-	s_ret_buf[0] = '\0';
-	sprintf(s_ret_buf, "x_map_16value: %d   y_map_16value: %d\n",
-			s_adc_map_16value[0], s_adc_map_16value[1]);
-	usart1_transmit_dma((uint8_t*) s_ret_buf, strlen(s_ret_buf));
+#if DEBUG
+  // Clear the return buffer
+  s_ret_buf[0] = '\0';
+
+  // Format the mapped values into the return buffer
+  sprintf(s_ret_buf, "x_map_16value: %d   y_map_16value: %d\n",
+          s_adc_map_16value[0], s_adc_map_16value[1]);
+
+  // Transmit the formatted string via USART
+  usart1_transmit_dma((uint8_t *)s_ret_buf, strlen(s_ret_buf));
 #else
-    chain_command_complete_return(CHAIN_JOYSTICK_GET_ADC_XY_MAPPED_INT16_VALUE,
-                                    (uint8_t *)s_adc_map_16value, 4);
+  // Return the mapped 16-bit values through a command completion callback
+  chain_command_complete_return(CHAIN_JOYSTICK_GET_ADC_XY_MAPPED_INT16_VALUE,
+                                (uint8_t *)s_adc_map_16value, 4);
 #endif
 }
 
+/**
+ * @brief Gets the mapped 8-bit ADC values for the joystick.
+ * @note This function either transmits the mapped values over USART in debug
+ * mode
+ *       or returns them through a command completion callback in normal mode.
+ *
+ * @param None
+ * @retval None
+ */
 void chain_joystick_get_adc_xy_mapped_int8_value(void) {
-#ifdef DEBUG
-	s_ret_buf[0] = '\0';
-	sprintf(s_ret_buf, "x_map_8value: %d   y_map_8value: %d\n",
-			s_adc_map_8value[0], s_adc_map_8value[1]);
-	usart1_transmit_dma((uint8_t*) s_ret_buf, strlen(s_ret_buf));
+#if DEBUG
+  // Clear the return buffer
+  s_ret_buf[0] = '\0';
+
+  // Format the mapped values into the return buffer
+  sprintf(s_ret_buf, "x_map_8value: %d   y_map_8value: %d\n",
+          s_adc_map_8value[0], s_adc_map_8value[1]);
+
+  // Transmit the formatted string via USART
+  usart1_transmit_dma((uint8_t *)s_ret_buf, strlen(s_ret_buf));
 #else
-    chain_command_complete_return(CHAIN_JOYSTICK_GET_ADC_XY_MAPPED_INT8_VALUE,
-                                    (uint8_t *)s_adc_map_8value, 2);
+  // Return the mapped 8-bit values through a command completion callback
+  chain_command_complete_return(CHAIN_JOYSTICK_GET_ADC_XY_MAPPED_INT8_VALUE,
+                                (uint8_t *)s_adc_map_8value, 2);
 #endif
 }
 
+/**
+ * @brief Handles joystick button press events.
+ * @note This function either transmits a button press message over USART in
+ * debug mode
+ *       or updates the key status in normal mode.
+ *
+ * @param None
+ * @retval None
+ */
 void chain_joystick_button_press(void) {
-#ifdef DEBUG
-	s_ret_buf[0] = '\0';
-	sprintf(s_ret_buf, "button press\n");
-	usart1_transmit_dma((uint8_t*) s_ret_buf, strlen(s_ret_buf));
+#if DEBUG
+  // Clear the return buffer
+  s_ret_buf[0] = '\0';
+
+  // Send button press message
+  sprintf(s_ret_buf, "button press\n");
+  usart1_transmit_dma((uint8_t *)s_ret_buf, strlen(s_ret_buf));
 #else
-    s_key_status =
-          0x11; // Sets s_key_status to 0x11, indicating the key press down state
-      chain_command_complete_return(
-          CHAIN_JOYSTICK_BUTTON_PRESS, &s_key_status,
-          1); // Sends the command with the current key status
+  // Update key status to indicate button press
+  s_key_status = 0x11; // Indicates the key press down state
+  chain_command_complete_return(CHAIN_JOYSTICK_BUTTON_PRESS, &s_key_status, 1);
 #endif
 }
 
+/**
+ * @brief Callback for external interrupt when the button is pressed.
+ * @note This function debounces the button press and calls the appropriate
+ * handler.
+ *
+ * @param GPIO_Pin The pin that triggered the interrupt.
+ * @retval None
+ */
 void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin) {
-	if (GPIO_Pin == BTN1_Pin) {
-		if(HAL_GetTick() - s_last_interrupt_time > DEBOUNCE_DELAY){
-			s_last_interrupt_time = HAL_GetTick();
-			chain_joystick_button_press();
-		}
-	}
+  if (GPIO_Pin == BTN1_Pin) {
+    // Check for debounce delay
+    if (HAL_GetTick() - s_last_interrupt_time > DEBOUNCE_DELAY) {
+      s_last_interrupt_time = HAL_GetTick(); // Update last interrupt time
+      chain_joystick_button_press();         // Handle button press
+    }
+  }
 }
