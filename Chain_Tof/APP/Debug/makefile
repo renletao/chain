@@ -9,6 +9,8 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include Drivers/VL53L1/platform/subdir.mk
+-include Drivers/VL53L1/core/subdir.mk
 -include Drivers/STM32G0xx_HAL_Driver/Src/subdir.mk
 -include Core/flash/subdir.mk
 -include Core/Startup/subdir.mk
@@ -37,40 +39,40 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := Chain_Encoder
+BUILD_ARTIFACT_NAME := Chain_Tof
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-Chain_Encoder.elf \
+Chain_Tof.elf \
 
 MAP_FILES += \
-Chain_Encoder.map \
+Chain_Tof.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-Chain_Encoder.list \
+Chain_Tof.list \
 
 OBJCOPY_HEX += \
-Chain_Encoder.hex \
+Chain_Tof.hex \
 
 OBJCOPY_BIN += \
-Chain_Encoder.bin \
+Chain_Tof.bin \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: Chain_Encoder.elf secondary-outputs
+main-build: Chain_Tof.elf secondary-outputs
 
 # Tool invocations
-Chain_Encoder.elf Chain_Encoder.map: $(OBJS) $(USER_OBJS) C:\Users\15191\Desktop\Chain3\Chain\STM32G031G8UX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Chain_Encoder.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\Users\15191\Desktop\Chain3\Chain\STM32G031G8UX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Chain_Encoder.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Chain_Tof.elf Chain_Tof.map: $(OBJS) $(USER_OBJS) C:\Users\15191\Desktop\chain\Chain_Tof\APP\STM32G031G8UX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Chain_Tof.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\Users\15191\Desktop\chain\Chain_Tof\APP\STM32G031G8UX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Chain_Tof.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -79,24 +81,24 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Chain_Encoder.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Chain_Encoder.list"
+Chain_Tof.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Chain_Tof.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Chain_Encoder.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "Chain_Encoder.hex"
+Chain_Tof.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "Chain_Tof.hex"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Chain_Encoder.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "Chain_Encoder.bin"
+Chain_Tof.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "Chain_Tof.bin"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) Chain_Encoder.bin Chain_Encoder.elf Chain_Encoder.hex Chain_Encoder.list Chain_Encoder.map default.size.stdout
+	-$(RM) Chain_Tof.bin Chain_Tof.elf Chain_Tof.hex Chain_Tof.list Chain_Tof.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)

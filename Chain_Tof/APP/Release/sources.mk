@@ -30,5 +30,5 @@ Core/Src \
 Core/Startup \
 Core/flash \
 Drivers/STM32G0xx_HAL_Driver/Src \
-Drivers/VL53L0X/Src \
+Drivers/VL53L1X \
 

@@ -42,7 +42,7 @@ Core/Chain_Function/tof_function.o: ../Core/Chain_Function/tof_function.c \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_dma.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h \
  ../Core/Chain_Function/base_function.h ../Core/Inc/usart.h \
- ../Core/Inc/main.h ../Core/Inc/i2c.h
+ ../Core/Inc/main.h
 ../Core/Chain_Function/tof_function.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h:
@@ -89,4 +89,3 @@ Core/Chain_Function/tof_function.o: ../Core/Chain_Function/tof_function.c \
 ../Core/Chain_Function/base_function.h:
 ../Core/Inc/usart.h:
 ../Core/Inc/main.h:
-../Core/Inc/i2c.h:

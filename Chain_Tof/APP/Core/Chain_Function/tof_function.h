@@ -15,7 +15,6 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "base_function.h"
-#include "i2c.h"
 
 #define VL53L0X_ADDRESS           (0x29)  // VL53L0X 激光测距传感器的 I2C 地址
 // VL53L0X 寄存器地址宏定义

@@ -1,0 +1,12 @@
+../Drivers/VL53L1/platform/IOI2C.c:122:13:IIC_Send_Byte	16	static
+../Drivers/VL53L1/platform/IOI2C.c:106:13:IIC_NAck	16	static
+../Drivers/VL53L1/platform/IOI2C.c:49:13:IIC_Stop	16	static
+../Drivers/VL53L1/platform/IOI2C.c:90:13:IIC_Ack	16	static
+../Drivers/VL53L1/platform/IOI2C.c:29:16:IIC_Start	16	static
+../Drivers/VL53L1/platform/IOI2C.c:67:16:IIC_Wait_Ack	16	static
+../Drivers/VL53L1/platform/IOI2C.c:145:22:IIC_Read_Byte	24	static
+../Drivers/VL53L1/platform/IOI2C.c:174:9:IIC_ReadOneByte	24	static
+../Drivers/VL53L1/platform/IOI2C.c:208:9:IICreadBytes	32	static
+../Drivers/VL53L1/platform/IOI2C.c:253:9:IICwriteBytes	24	static
+../Drivers/VL53L1/platform/IOI2C.c:283:9:IICwriteByte	16	static
+../Drivers/VL53L1/platform/IOI2C.c:299:9:IICwriteBit	32	static
