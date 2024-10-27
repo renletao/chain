@@ -2,7 +2,9 @@
 ../Core/flash/myflash.c:27:13:set_byte_in_uint64	16	static
 ../Core/flash/myflash.c:44:17:my_flash_read_double_word	0	static
 ../Core/flash/myflash.c:59:13:my_flash_earse_pages	32	static
-../Core/flash/myflash.c:86:13:my_flash_write_double_word	16	static
-../Core/flash/myflash.c:127:9:get_rgb_light	0	static
-../Core/flash/myflash.c:104:6:set_rgb_light	24	static
-../Core/flash/myflash.c:140:9:get_bootloader_version	0	static
+../Core/flash/myflash.c:85:13:my_flash_write_double_word	16	static
+../Core/flash/myflash.c:132:9:get_tof_mode	0	static
+../Core/flash/myflash.c:103:6:set_tof_mode	24	static
+../Core/flash/myflash.c:170:9:get_rgb_light	0	static
+../Core/flash/myflash.c:147:6:set_rgb_light	24	static
+../Core/flash/myflash.c:183:9:get_bootloader_version	0	static

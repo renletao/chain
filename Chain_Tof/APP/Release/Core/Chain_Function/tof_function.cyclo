@@ -1,1 +1,3 @@
-../Core/Chain_Function/tof_function.c:3:6:tof_init	1
+../Core/Chain_Function/tof_function.c:20:6:chain_tof_get_distance	1
+../Core/Chain_Function/tof_function.c:39:6:chain_tof_set_mode	3
+../Core/Chain_Function/tof_function.c:98:6:chain_tof_get_mode	1

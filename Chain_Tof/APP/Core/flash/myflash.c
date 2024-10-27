@@ -4,7 +4,7 @@
  * @brief Get the page number based on the address.
  * @note This function calculates the page number by determining how far
  *       the provided address is from the starting address of the first flash page.
- * 
+ *
  * @param addr The memory address to check.
  * @retval The page number corresponding to the provided address.
  */
@@ -18,7 +18,7 @@ static uint32_t get_page(uint32_t addr)
  * @note This function clears the byte at the specified index in the 64-bit data
  *       and sets it to the new value. The byte index is multiplied by 8 to
  *       calculate the correct bit position.
- * 
+ *
  * @param data The pointer to the 64-bit data to be modified.
  * @param byte_index The index of the byte to modify (0-7).
  * @param new_value The new byte value to set (0-255).
@@ -35,9 +35,9 @@ static void set_byte_in_uint64(uint64_t *data, uint8_t byte_index, uint8_t new_v
 /**
  * @brief Read a double word (64 bits) from a given memory address.
  * @note This function dereferences the provided address and returns the 64-bit
- *       value stored there. It uses the volatile pointer type to ensure that 
+ *       value stored there. It uses the volatile pointer type to ensure that
  *       the compiler does not optimize out the read operation.
- * 
+ *
  * @param address The memory address from which to read.
  * @retval The 64-bit value read from the memory address.
  */
@@ -49,47 +49,90 @@ static uint64_t my_flash_read_double_word(uint32_t address)
 /**
  * @brief Erase a specific flash page.
  * @note This function initiates the page erase operation for the specified flash
- *       memory address. It unlocks the flash memory, performs the erase, and 
+ *       memory address. It unlocks the flash memory, performs the erase, and
  *       then locks the flash memory again. The function returns true if the
  *       operation is successful; otherwise, it returns false.
- * 
+ *
  * @param page_address The address of the page to be erased.
  * @retval Success status (true if successful, false otherwise).
  */
 static bool my_flash_earse_pages(uint32_t page_address)
 {
-    uint32_t page_error = 0; // Variable to hold error information if the erase fails
+    uint32_t page_error = 0;         // Variable to hold error information if the erase fails
     FLASH_EraseInitTypeDef my_flash; // Structure for flash erase initialization
-    
+
     my_flash.TypeErase = FLASH_TYPEERASE_PAGES; // Specify that we are erasing pages
-    my_flash.Page = get_page(page_address); // Get the page number based on the address
-    my_flash.NbPages = 1; // Specify that we want to erase one page
-    
-    HAL_FLASH_Unlock(); // Unlock the flash memory for write access
+    my_flash.Page = get_page(page_address);     // Get the page number based on the address
+    my_flash.NbPages = 1;                       // Specify that we want to erase one page
+
+    HAL_FLASH_Unlock();                                                   // Unlock the flash memory for write access
     HAL_StatusTypeDef status = HAL_FLASHEx_Erase(&my_flash, &page_error); // Perform the erase operation
-    HAL_FLASH_Lock(); // Lock the flash memory again
-    
+    HAL_FLASH_Lock();                                                     // Lock the flash memory again
+
     // Return true if the erase was successful, false otherwise
     return (status == HAL_OK) ? true : false;
 }
 
-
 /**
  * @brief Write a double word to the specified memory address.
  * @note This function unlocks the flash memory, programs a double word at
- *       the given address, and then locks the flash memory again. 
- * 
+ *       the given address, and then locks the flash memory again.
+ *
  * @param address The memory address to which the data will be written.
  * @param data The 64-bit data to be written.
  * @retval true if the write operation is successful, false otherwise.
  */
 static bool my_flash_write_double_word(uint32_t address, uint64_t data)
 {
-    HAL_FLASH_Unlock(); // Unlock the flash memory for writing
+    HAL_FLASH_Unlock();                                                                        // Unlock the flash memory for writing
     HAL_StatusTypeDef status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, address, data); // Program the double word
-    HAL_FLASH_Lock(); // Lock the flash memory again
+    HAL_FLASH_Lock();                                                                          // Lock the flash memory again
 
     return (status == HAL_OK); // Return success status
+}
+
+/**
+ * @brief Set the TOF mode.
+ * @note This function reads the current TOF mode from flash memory,
+ *       modifies the specified byte to set the new TOF mode,
+ *       erases the flash page, and writes the updated data back to flash.
+ *
+ * @param data The new TOF mode to set.
+ * @retval true if the TOF mode modification is successful, false otherwise.
+ */
+bool set_tof_mode(uint8_t data)
+{
+    // Read the current TOF mode from the specified flash address
+    uint64_t temp = my_flash_read_double_word(STM32G0xx_FLASH_PAGE24_STARTADDR);
+
+    // Modify the byte at index 0 to set the new TOF mode
+    set_byte_in_uint64(&temp, 0, data);
+
+    // Erase the flash page before writing new data
+    my_flash_earse_pages(STM32G0xx_FLASH_PAGE24_STARTADDR);
+
+    // Attempt to write the modified data back to flash until successful
+    while (!my_flash_write_double_word(STM32G0xx_FLASH_PAGE24_STARTADDR, temp))
+    {
+        // Loop until the write operation is successful
+    }
+
+    // Verify that the new mode has been set correctly and return the result
+    return (get_tof_mode() == data);
+}
+
+/**
+ * @brief Get the current TOF mode.
+ * @note This function reads the current TOF mode stored at the
+ *       defined TOF mode address.
+ *
+ * @param None
+ * @retval The current TOF mode.
+ */
+uint8_t get_tof_mode(void)
+{
+    // Retrieve the TOF mode from the specified flash address
+    return *((__IO uint8_t *)(TOF_MODE_ADDR));
 }
 
 /**
@@ -97,30 +140,30 @@ static bool my_flash_write_double_word(uint32_t address, uint64_t data)
  * @note This function reads the current state of the RGB light data,
  *       modifies the specified byte with the new brightness value,
  *       erases the flash page, and writes the updated data back to flash.
- * 
+ *
  * @param data The new brightness value to set (0-255).
  * @retval true if the brightness modification is successful, false otherwise.
  */
 bool set_rgb_light(uint8_t data)
 {
     uint64_t temp = my_flash_read_double_word(STM32G0xx_FLASH_PAGE24_STARTADDR); // Read current RGB light data
-    set_byte_in_uint64(&temp, 1, data); // Modify the brightness byte
-    my_flash_earse_pages(STM32G0xx_FLASH_PAGE24_STARTADDR); // Erase the flash page
+    set_byte_in_uint64(&temp, 1, data);                                          // Modify the brightness byte
+    my_flash_earse_pages(STM32G0xx_FLASH_PAGE24_STARTADDR);                      // Erase the flash page
 
     // Attempt to write the modified data back to flash until successful
     while (!my_flash_write_double_word(STM32G0xx_FLASH_PAGE24_STARTADDR, temp))
     {
     }
-    
+
     // Verify if the new brightness value has been successfully set
     return (get_rgb_light() == data);
 }
 
 /**
  * @brief Get the current RGB brightness value.
- * @note This function reads the current brightness value stored at the 
+ * @note This function reads the current brightness value stored at the
  *       defined RGB light address.
- * 
+ *
  * @param None
  * @retval The current RGB brightness value.
  */
@@ -133,7 +176,7 @@ uint8_t get_rgb_light(void)
  * @brief Get the bootloader version number.
  * @note This function reads the bootloader version number stored at the
  *       defined address.
- * 
+ *
  * @param None
  * @retval The bootloader version number.
  */
