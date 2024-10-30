@@ -4600,7 +4600,7 @@ Disassembly of section .text:
  8004558:	f001 f816 	bl	8005588 <set_clockwise_status>
  800455c:	e7ef      	b.n	800453e <chain_init+0x1a>
  800455e:	4b06      	ldr	r3, [pc, #24]	@ (8004578 <chain_init+0x54>)
- 8004560:	220a      	movs	r2, #10
+ 8004560:	2228      	movs	r2, #40	@ 0x28
  8004562:	701a      	strb	r2, [r3, #0]
  8004564:	7818      	ldrb	r0, [r3, #0]
  8004566:	b2c0      	uxtb	r0, r0

@@ -41,7 +41,7 @@ Drivers/VL53L1X/VL53L1X.o: ../Drivers/VL53L1X/VL53L1X.c \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_gpio.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_dma.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h \
- C:/Users/19344/Desktop/chain-main/Chain_Tof/APP/Core/Chain_Function/base_function.h \
+ C:/Users/15191/Desktop/chain/Chain_Tof/APP/Core/Chain_Function/base_function.h \
  ../Core/Inc/usart.h ../Core/Inc/main.h ../Core/Inc/i2c.h
 ../Drivers/VL53L1X/VL53L1X.h:
 ../Core/Inc/main.h:
@@ -86,7 +86,7 @@ Drivers/VL53L1X/VL53L1X.o: ../Drivers/VL53L1X/VL53L1X.c \
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_gpio.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_dma.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h:
-C:/Users/19344/Desktop/chain-main/Chain_Tof/APP/Core/Chain_Function/base_function.h:
+C:/Users/15191/Desktop/chain/Chain_Tof/APP/Core/Chain_Function/base_function.h:
 ../Core/Inc/usart.h:
 ../Core/Inc/main.h:
 ../Core/Inc/i2c.h:

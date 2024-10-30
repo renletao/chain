@@ -5007,7 +5007,7 @@ Disassembly of section .text:
  800488a:	f000 ff33 	bl	80056f4 <get_rgb_light>
  800488e:	28ff      	cmp	r0, #255	@ 0xff
  8004890:	d114      	bne.n	80048bc <chain_init+0x40>
- 8004892:	200a      	movs	r0, #10
+ 8004892:	2028      	movs	r0, #40	@ 0x28
  8004894:	4b17      	ldr	r3, [pc, #92]	@ (80048f4 <chain_init+0x78>)
  8004896:	7018      	strb	r0, [r3, #0]
  8004898:	7818      	ldrb	r0, [r3, #0]

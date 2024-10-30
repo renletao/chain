@@ -83,7 +83,7 @@ void Error_Handler(void);
 #define APPLICATION_ADDRESS (0x08002000)  // App starting address
 #define BUFFER_SIZE (512)                 // Buffer size
 #define ENUM_PLEASE_NUM (3)               // Power on and send enumeration requests three times in a row.
-#define RGB_LIGHT_BASE (10)               // The default RGB brightness is 10%
+#define RGB_LIGHT_BASE (40)               // The default RGB brightness is 40%
 
 typedef enum {
 	BUFFER_DATA_READY = 0x00, 	// Active data processing

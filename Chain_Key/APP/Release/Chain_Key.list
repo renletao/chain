@@ -4390,7 +4390,7 @@ Disassembly of section .text:
  8004388:	7018      	strb	r0, [r3, #0]
  800438a:	bd10      	pop	{r4, pc}
  800438c:	4b04      	ldr	r3, [pc, #16]	@ (80043a0 <chain_init+0x30>)
- 800438e:	220a      	movs	r2, #10
+ 800438e:	2228      	movs	r2, #40	@ 0x28
  8004390:	701a      	strb	r2, [r3, #0]
  8004392:	7818      	ldrb	r0, [r3, #0]
  8004394:	b2c0      	uxtb	r0, r0

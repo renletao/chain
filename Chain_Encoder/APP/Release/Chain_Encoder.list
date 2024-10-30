@@ -4635,7 +4635,7 @@ Disassembly of section .text:
  8004592:	f001 f893 	bl	80056bc <set_ab_status>
  8004596:	e7ee      	b.n	8004576 <chain_init+0x1a>
  8004598:	4b05      	ldr	r3, [pc, #20]	@ (80045b0 <chain_init+0x54>)
- 800459a:	220a      	movs	r2, #10
+ 800459a:	2228      	movs	r2, #40	@ 0x28
  800459c:	701a      	strb	r2, [r3, #0]
  800459e:	7818      	ldrb	r0, [r3, #0]
  80045a0:	b2c0      	uxtb	r0, r0

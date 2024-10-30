@@ -1,0 +1,10 @@
+../Core/RGB/RGB.c:72:6:GPIO_init	32	static
+../Core/RGB/RGB.c:91:6:rgb_send_data	0	static,ignoring_inline_asm
+../Core/RGB/RGB.c:116:6:set_color	0	static
+../Core/RGB/RGB.c:131:6:rgb_show	8	static,ignoring_inline_asm
+../Core/RGB/RGB.c:151:10:rgb_value_convert	32	static
+../Core/RGB/RGB.c:170:6:rgb_init	8	static,ignoring_inline_asm
+../Core/RGB/RGB.c:188:6:chain_set_rgb_value	8	static
+../Core/RGB/RGB.c:220:6:chain_get_rgb_value	8	static
+../Core/RGB/RGB.c:237:6:chain_set_light_value	8	static
+../Core/RGB/RGB.c:270:6:chain_get_light_value	8	static

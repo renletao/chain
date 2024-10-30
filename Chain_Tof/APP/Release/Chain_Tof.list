@@ -5002,7 +5002,7 @@ Disassembly of section .text:
  8004846:	f000 fedd 	bl	8005604 <set_tof_mode>
  800484a:	e7ee      	b.n	800482a <chain_init+0x1a>
  800484c:	4b05      	ldr	r3, [pc, #20]	@ (8004864 <chain_init+0x54>)
- 800484e:	220a      	movs	r2, #10
+ 800484e:	2228      	movs	r2, #40	@ 0x28
  8004850:	701a      	strb	r2, [r3, #0]
  8004852:	7818      	ldrb	r0, [r3, #0]
  8004854:	b2c0      	uxtb	r0, r0

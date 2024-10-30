@@ -1,0 +1,1 @@
+python .\iap_app_me.py C:\Users\15191\Desktop\chain\Chain_IAP\Release\Chain_IAP.bin
