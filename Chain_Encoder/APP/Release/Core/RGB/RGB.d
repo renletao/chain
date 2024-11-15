@@ -40,9 +40,9 @@ Core/RGB/RGB.o: ../Core/RGB/RGB.c ../Core/RGB/RGB.h ../Core/Inc/main.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_gpio.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_dma.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h \
- C:/Users/15191/Desktop/chain/Chain_Encoder/APP/Core/Chain_Function/base_function.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Encoder/APP/Core/Chain_Function/base_function.h \
  ../Core/Inc/usart.h ../Core/Inc/main.h \
- C:/Users/15191/Desktop/chain/Chain_Encoder/APP/Core/flash/myflash.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Encoder/APP/Core/flash/myflash.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h \
  ../Core/Inc/tim.h
 ../Core/RGB/RGB.h:
@@ -88,9 +88,9 @@ Core/RGB/RGB.o: ../Core/RGB/RGB.c ../Core/RGB/RGB.h ../Core/Inc/main.h \
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_gpio.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_dma.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h:
-C:/Users/15191/Desktop/chain/Chain_Encoder/APP/Core/Chain_Function/base_function.h:
+C:/Users/15191/Desktop/chainV5/Chain_Encoder/APP/Core/Chain_Function/base_function.h:
 ../Core/Inc/usart.h:
 ../Core/Inc/main.h:
-C:/Users/15191/Desktop/chain/Chain_Encoder/APP/Core/flash/myflash.h:
+C:/Users/15191/Desktop/chainV5/Chain_Encoder/APP/Core/flash/myflash.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h:
 ../Core/Inc/tim.h:

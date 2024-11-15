@@ -45,14 +45,14 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_dma.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h \
  ../Core/Inc/adc.h ../Core/Inc/main.h \
- C:/Users/15191/Desktop/Chain_Uart/APP/Core/Chain_Function/uart_function.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/Chain_Function/uart_function.h \
  ../Core/Inc/usart.h \
- C:/Users/15191/Desktop/Chain_Uart/APP/Core/Chain_Function/base_function.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/Chain_Function/base_function.h \
  ../Core/Inc/i2c.h ../Core/Inc/dma.h ../Core/Inc/iwdg.h ../Core/Inc/tim.h \
  ../Core/Inc/gpio.h \
- C:/Users/15191/Desktop/Chain_Uart/APP/Core/Chain_Function/base_function.h \
- C:/Users/15191/Desktop/Chain_Uart/APP/Core/RGB/RGB.h \
- C:/Users/15191/Desktop/Chain_Uart/APP/Core/flash/myflash.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/Chain_Function/base_function.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/RGB/RGB.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/flash/myflash.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h
 ../Core/Inc/main.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h:
@@ -102,15 +102,15 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h:
 ../Core/Inc/adc.h:
 ../Core/Inc/main.h:
-C:/Users/15191/Desktop/Chain_Uart/APP/Core/Chain_Function/uart_function.h:
+C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/Chain_Function/uart_function.h:
 ../Core/Inc/usart.h:
-C:/Users/15191/Desktop/Chain_Uart/APP/Core/Chain_Function/base_function.h:
+C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/Chain_Function/base_function.h:
 ../Core/Inc/i2c.h:
 ../Core/Inc/dma.h:
 ../Core/Inc/iwdg.h:
 ../Core/Inc/tim.h:
 ../Core/Inc/gpio.h:
-C:/Users/15191/Desktop/Chain_Uart/APP/Core/Chain_Function/base_function.h:
-C:/Users/15191/Desktop/Chain_Uart/APP/Core/RGB/RGB.h:
-C:/Users/15191/Desktop/Chain_Uart/APP/Core/flash/myflash.h:
+C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/Chain_Function/base_function.h:
+C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/RGB/RGB.h:
+C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/flash/myflash.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h:

@@ -1,6 +1,6 @@
 #include "base_function.h"
 
-static uint8_t s_send_buf[BUFFER_SIZE] = {0}; // Data packet buffer
+static uint8_t s_send_buf[BUFFER_SIZE] = { 0 }; // Data packet buffer
 static uint8_t s_send_len = 0;				  // Length of the data to be sent
 
 /**
@@ -11,10 +11,9 @@ static uint8_t s_send_len = 0;				  // Length of the data to be sent
  * @param None
  * @retval None
  */
-void add_pack_head(void)
-{
-    s_send_buf[s_send_len++] = PACK_HEAD_HIGH; // Add high byte of header
-    s_send_buf[s_send_len++] = PACK_HEAD_LOW;  // Add low byte of header
+void add_pack_head(void) {
+	s_send_buf[s_send_len++] = PACK_HEAD_HIGH; // Add high byte of header
+	s_send_buf[s_send_len++] = PACK_HEAD_LOW;  // Add low byte of header
 }
 
 /**
@@ -25,10 +24,9 @@ void add_pack_head(void)
  * @param None
  * @retval None
  */
-void add_pack_end(void)
-{
-    s_send_buf[s_send_len++] = PACK_END_HIGH; // Add high byte of footer
-    s_send_buf[s_send_len++] = PACK_END_LOW;  // Add low byte of footer
+void add_pack_end(void) {
+	s_send_buf[s_send_len++] = PACK_END_HIGH; // Add high byte of footer
+	s_send_buf[s_send_len++] = PACK_END_LOW;  // Add low byte of footer
 }
 
 /**
@@ -41,15 +39,14 @@ void add_pack_end(void)
  * @retval uint8_t CHECK_PASS if header and footer are correct, 
  *         otherwise CHECK_ERROR.
  */
-uint8_t head_end_check(uint8_t *buffer, uint16_t size)
-{
-    // Check if the first two bytes are the header and the last two bytes are the footer
-    if (buffer[0] == PACK_HEAD_HIGH && buffer[1] == PACK_HEAD_LOW &&
-        buffer[size - 1] == PACK_END_LOW && buffer[size - 2] == PACK_END_HIGH)
-    {
-        return CHECK_PASS; // Return success if checks pass
-    }
-    return CHECK_ERROR; // Return error if checks fail
+uint8_t head_end_check(uint8_t *buffer, uint16_t size) {
+	// Check if the first two bytes are the header and the last two bytes are the footer
+	if (buffer[0] == PACK_HEAD_HIGH && buffer[1] == PACK_HEAD_LOW
+			&& buffer[size - 1] == PACK_END_LOW
+			&& buffer[size - 2] == PACK_END_HIGH) {
+		return CHECK_PASS; // Return success if checks pass
+	}
+	return CHECK_ERROR; // Return error if checks fail
 }
 
 /**
@@ -63,23 +60,20 @@ uint8_t head_end_check(uint8_t *buffer, uint16_t size)
  * @retval uint8_t CHECK_PASS if CRC is valid, 
  *         otherwise CHECK_ERROR.
  */
-uint8_t crc_check(uint8_t *buffer, uint16_t size)
-{
-    uint8_t crc = buffer[size - 3]; // Extract the CRC from the packet
-    uint8_t temp = 0;
+uint8_t crc_check(uint8_t *buffer, uint16_t size) {
+	uint8_t crc = buffer[size - 3]; // Extract the CRC from the packet
+	uint8_t temp = 0;
 
-    // Calculate CRC for the data (excluding header, footer, and CRC)
-    for (uint16_t i = 0; i < (((buffer[3] << 8) | buffer[2]) - 1); i++)
-    {
-        temp += buffer[i + 4]; // Start after header, offset by 4
-    }
+	// Calculate CRC for the data (excluding header, footer, and CRC)
+	for (uint16_t i = 0; i < (((buffer[3] << 8) | buffer[2]) - 1); i++) {
+		temp += buffer[i + 4]; // Start after header, offset by 4
+	}
 
-    // Compare calculated CRC with the provided CRC
-    if (crc == temp)
-    {
-        return CHECK_PASS; // CRC matches
-    }
-    return CHECK_ERROR; // CRC does not match
+	// Compare calculated CRC with the provided CRC
+	if (crc == temp) {
+		return CHECK_PASS; // CRC matches
+	}
+	return CHECK_ERROR; // CRC does not match
 }
 
 /**
@@ -92,21 +86,18 @@ uint8_t crc_check(uint8_t *buffer, uint16_t size)
  * @param  size   Size of the buffer.
  * @retval uint8_t CHECK_PASS if the packet is valid, otherwise CHECK_ERROR.
  */
-uint8_t pack_check(uint8_t *buffer, uint16_t size)
-{
-    // Ensure the buffer is large enough to contain a valid packet
-    if (size <= 4)
-    {
-        return CHECK_ERROR; // Packet is too small
-    }
+uint8_t pack_check(uint8_t *buffer, uint16_t size) {
+	// Ensure the buffer is large enough to contain a valid packet
+	if (size <= 4) {
+		return CHECK_ERROR; // Packet is too small
+	}
 
-    // Check the packet header/footer and CRC
-    if (head_end_check(buffer, size) == CHECK_PASS &&
-        crc_check(buffer, size) == CHECK_PASS)
-    {
-        return CHECK_PASS; // Packet is valid
-    }
-    return CHECK_ERROR; // Packet is invalid
+	// Check the packet header/footer and CRC
+	if (head_end_check(buffer, size) == CHECK_PASS
+			&& crc_check(buffer, size) == CHECK_PASS) {
+		return CHECK_PASS; // Packet is valid
+	}
+	return CHECK_ERROR; // Packet is invalid
 }
 
 /**
@@ -118,17 +109,15 @@ uint8_t pack_check(uint8_t *buffer, uint16_t size)
  * @param  size   Size of the buffer.
  * @retval uint8_t The calculated CRC value.
  */
-uint8_t crc_construct(uint8_t *buffer, uint16_t size)
-{
-    uint8_t temp = 0;
+uint8_t crc_construct(uint8_t *buffer, uint16_t size) {
+	uint8_t temp = 0;
 
-    // Calculate the CRC by summing all bytes in the buffer
-    for (uint16_t i = 0; i < size; i++)
-    {
-        temp += buffer[i];
-    }
+	// Calculate the CRC by summing all bytes in the buffer
+	for (uint16_t i = 0; i < size; i++) {
+		temp += buffer[i];
+	}
 
-    return temp; // Return the calculated CRC
+	return temp; // Return the calculated CRC
 }
 
 /**
@@ -139,9 +128,8 @@ uint8_t crc_construct(uint8_t *buffer, uint16_t size)
  * @param  size   Size of the buffer.
  * @retval None
  */
-void uart_in_send(uint8_t *buffer, uint16_t size)
-{
-    usart1_transmit_dma(buffer, size); // Send data using USART1 in DMA mode
+void uart_in_send(uint8_t *buffer, uint16_t size) {
+	usart1_transmit_dma(buffer, size); // Send data using USART1 in DMA mode
 }
 
 /**
@@ -152,9 +140,8 @@ void uart_in_send(uint8_t *buffer, uint16_t size)
  * @param  size   Size of the buffer.
  * @retval None
  */
-void uart_out_send(uint8_t *buffer, uint16_t size)
-{
-    usart2_transmit_dma(buffer, size); // Send data using USART2 in DMA mode
+void uart_out_send(uint8_t *buffer, uint16_t size) {
+	usart2_transmit_dma(buffer, size); // Send data using USART2 in DMA mode
 }
 
 /**
@@ -166,11 +153,10 @@ void uart_out_send(uint8_t *buffer, uint16_t size)
  * @param  None
  * @retval None
  */
-void chain_get_bootloader_version_handle(void)
-{
+void chain_get_bootloader_version_handle(void) {
 	// Return the bootloader version
 	chain_command_complete_return(CHAIN_GET_BOOTLOADER_VERSION,
-								  (uint8_t *)&g_bootloader_version, 1);
+			(uint8_t*) &g_bootloader_version, 1);
 }
 
 /**
@@ -182,11 +168,10 @@ void chain_get_bootloader_version_handle(void)
  * @param  None
  * @retval None
  */
-void chain_get_firmware_version_handle(void)
-{
+void chain_get_firmware_version_handle(void) {
 	// Return the firmware version
 	chain_command_complete_return(CHAIN_GET_VERSION_DEVICE,
-								  (uint8_t *)&g_firmware_version, 1);
+			(uint8_t*) &g_firmware_version, 1);
 }
 
 /**
@@ -198,11 +183,10 @@ void chain_get_firmware_version_handle(void)
  * @param  None
  * @retval None
  */
-void chain_get_device_type_handle(void)
-{
+void chain_get_device_type_handle(void) {
 	// Return the device type
 	chain_command_complete_return(CHAIN_GET_DEVICE_TYPE,
-								  (uint8_t *)&g_device_type, 2);
+			(uint8_t*) &g_device_type, 2);
 }
 
 /**
@@ -216,8 +200,7 @@ void chain_get_device_type_handle(void)
  * @param  size   Size of the buffer
  * @retval None
  */
-void chain_enum_handle(uint8_t *buffer, uint16_t size)
-{
+void chain_enum_handle(uint8_t *buffer, uint16_t size) {
 	// Increment device count
 	buffer[6]++;
 
@@ -225,12 +208,9 @@ void chain_enum_handle(uint8_t *buffer, uint16_t size)
 	buffer[7]++;
 
 	// Check if the current device is a tail device
-	if (g_tail_status == CHAIN_TAIL_DEVICE)
-	{								// If it is a tail device
+	if (g_tail_status == CHAIN_TAIL_DEVICE) {		// If it is a tail device
 		uart_in_send(buffer, size); // Forward to the slave
-	}
-	else
-	{								 // If it is not a tail device
+	} else {								 // If it is not a tail device
 		uart_out_send(buffer, size); // Forward to the master
 	}
 }
@@ -244,8 +224,7 @@ void chain_enum_handle(uint8_t *buffer, uint16_t size)
  * @param  size   Size of the buffer
  * @retval None
  */
-void chain_enum_return_handle(uint8_t *buffer, uint16_t size)
-{
+void chain_enum_return_handle(uint8_t *buffer, uint16_t size) {
 	uart_in_send(buffer, size); // Send the incoming buffer
 }
 
@@ -258,8 +237,7 @@ void chain_enum_return_handle(uint8_t *buffer, uint16_t size)
  * @param  size   Size of the buffer
  * @retval None
  */
-void chain_enum_please_handle(uint8_t *buffer, uint16_t size)
-{
+void chain_enum_please_handle(uint8_t *buffer, uint16_t size) {
 	uart_in_send(buffer, size); // Send the incoming buffer
 }
 
@@ -272,23 +250,8 @@ void chain_enum_please_handle(uint8_t *buffer, uint16_t size)
  * @param  None
  * @retval None
  */
-void chain_heartbeat_in_receive_handle(void)
-{
-	uart_in_send(g_heartbeat_data_pack_buf, sizeof(g_heartbeat_data_pack_buf)); // Send heartbeat data
-}
-
-/**
- * @brief  Handles outgoing heartbeat packets
- * @note   This function updates the heartbeat reply status buffer to indicate
- *         that a heartbeat reply has been received. The status is cyclically
- *         updated using the index.
- * 
- * @param  None
- * @retval None
- */
-void chain_heartbeat_out_receive_handle(void)
-{
-	g_heartbeat_reply_status_buf[(g_reply_index + 2) % 3] = 1; // Update the heartbeat reply status
+void chain_heartbeat_in_receive_handle(void) {
+	 uart_in_send(g_heartbeat_data_pack_buf, sizeof(g_heartbeat_data_pack_buf)); // Send heartbeat data
 }
 
 /**
@@ -301,14 +264,11 @@ void chain_heartbeat_out_receive_handle(void)
  * @param  size   Size of the buffer
  * @retval None
  */
-void chain_deal_data_packet_handle(uint8_t *buffer, uint16_t size)
-{
-	if (g_cmd_status == CMD_SPACE_IDLE_STATUS)
-	{
+void chain_deal_data_packet_handle(uint8_t *buffer, uint16_t size) {
+	if (g_cmd_status == CMD_SPACE_IDLE_STATUS) {
 		g_cmd_size = 0;						  // Reset command size
 		g_cmd_status = CMD_SPACE_BUSY_STATUS; // Set command status to busy
-		for (uint8_t i = 0; i < (((buffer[3] << 8) | buffer[2]) - 2); i++)
-		{
+		for (uint8_t i = 0; i < (((buffer[3] << 8) | buffer[2]) - 2); i++) {
 			g_cmd_buf[g_cmd_size++] = buffer[i + 5]; // Copy data from the buffer
 		}
 	}
@@ -324,8 +284,7 @@ void chain_deal_data_packet_handle(uint8_t *buffer, uint16_t size)
  * @param  size   Size of the buffer
  * @retval None
  */
-void chain_out_relay_handle(uint8_t *buffer, uint16_t size)
-{
+void chain_out_relay_handle(uint8_t *buffer, uint16_t size) {
 	buffer[4]--;				 // Index decrement
 	buffer[size - 3]--;			 // CRC update
 	uart_out_send(buffer, size); // Forward to the lower level
@@ -341,8 +300,7 @@ void chain_out_relay_handle(uint8_t *buffer, uint16_t size)
  * @param  size   Size of the buffer
  * @retval None
  */
-void chain_in_relay_handle(uint8_t *buffer, uint16_t size)
-{
+void chain_in_relay_handle(uint8_t *buffer, uint16_t size) {
 	buffer[4]++;				// Index increment
 	buffer[size - 3]++;			// CRC update
 	uart_in_send(buffer, size); // Forward to the upper level
@@ -359,24 +317,22 @@ void chain_in_relay_handle(uint8_t *buffer, uint16_t size)
  * @param  size Size of the buffer
  * @retval None
  */
-void chain_command_complete_return(uint8_t cmd, uint8_t *buffer, uint16_t size)
-{
+void chain_command_complete_return(uint8_t cmd, uint8_t *buffer, uint16_t size) {
 	// Clear sending length
 	s_send_len = 0;
 	// Calculate sending length
 	uint16_t len = size + 3;
 	// Add packet header
 	add_pack_head();
-	s_send_buf[s_send_len++] = (uint8_t)(len & 0xFF);
-	s_send_buf[s_send_len++] = (uint8_t)((len >> 8) & 0xFF);
+	s_send_buf[s_send_len++] = (uint8_t) (len & 0xFF);
+	s_send_buf[s_send_len++] = (uint8_t) ((len >> 8) & 0xFF);
 	s_send_buf[s_send_len++] = DEFAULT_INDEX;
 	s_send_buf[s_send_len++] = cmd;
-	for (uint8_t i = 0; i < size; i++)
-	{
+	for (uint8_t i = 0; i < size; i++) {
 		s_send_buf[s_send_len++] = buffer[i]; // Add data from buffer
 	}
-	s_send_buf[s_send_len] = crc_construct((uint8_t *)(s_send_buf + 4),
-										   (s_send_len - 4)); // Calculate CRC
+	s_send_buf[s_send_len] = crc_construct((uint8_t*) (s_send_buf + 4),
+			(s_send_len - 4)); // Calculate CRC
 	s_send_len++;
 	add_pack_end();
 	uart_in_send(s_send_buf, s_send_len); // Send the complete packet
@@ -390,9 +346,8 @@ void chain_command_complete_return(uint8_t cmd, uint8_t *buffer, uint16_t size)
  * @param  None
  * @retval None
  */
-static void iap_gpio_init(void)
-{
-	GPIO_InitTypeDef GPIO_InitStruct = {0};
+static void iap_gpio_init(void) {
+	GPIO_InitTypeDef GPIO_InitStruct = { 0 };
 	/* GPIO Ports Clock Enable */
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 
@@ -414,32 +369,28 @@ static void iap_gpio_init(void)
  * @param  data Verification bit
  * @retval None
  */
-void chain_iap_update_handle(uint8_t data)
-{
+void chain_iap_update_handle(uint8_t data) {
 	uint32_t reset_wait_start = HAL_GetTick(); // Get the current tick count
 	if (data == 0x86) // Check for expected data
-	{
-		chain_command_complete_return(CHAIN_IAP_UPDATE,
-									  (uint8_t *)&data, 1); // Send completion packet
+			{
+		chain_command_complete_return(CHAIN_IAP_UPDATE, (uint8_t*) &data, 1); // Send completion packet
 		HAL_Delay(10); // Delay to ensure packet is sent
 		LL_USART_DeInit(USART1); // Deinitialize USART1
 		LL_USART_Disable(USART1); // Disable USART1
 		LL_USART_DisableIT_RXNE(USART1); // Disable USART1 RX interrupt
 		iap_gpio_init(); // Initialize GPIO for IAP
 		// Wait for reset conditions on GPIO pins
-		while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) || HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7))
-		{
+		while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6)
+				|| HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7)) {
 			if (HAL_GetTick() - reset_wait_start > 1000) // Check timeout
-			{
+					{
 				break; // Exit if timeout
 			}
 		}
 		if (HAL_GetTick() - reset_wait_start > 1000) // Check if timed out
-		{
+				{
 			MX_USART1_UART_Init(); // Reinitialize USART1 if no reset occurred
-		}
-		else
-		{
+		} else {
 			NVIC_SystemReset(); // Reset the microcontroller
 		}
 		NVIC_SystemReset(); // Reset the microcontroller again

@@ -26,7 +26,7 @@ extern "C" {
   } // Default mapping range values
 
 // Debounce delay in milliseconds
-#define DEBOUNCE_DELAY (150) // Delay for debouncing in milliseconds
+#define DEBOUNCE_TIME_MS (150)           // 50ms debounce time
 
 // Number of ADC channels
 #define ADC_CHANNEL_NUMS (2) // Total number of ADC channels

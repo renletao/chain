@@ -43,65 +43,65 @@
 // //     data1[1] = 0x01;
 // //     M5.Ex_I2C.writeRegister(i2c_adr, MQ_CFG_REG_ADDR, data1, 2, 100000U);
 
-//     M5.Ex_I2C.writeRegister(i2c_adr, I2C_ADDR_REG_ADDR, &i2c_adr_cfg, 1, 100000U);
-//     i2c_adr = i2c_adr_cfg;
-//     delay(3000);
+// //     M5.Ex_I2C.writeRegister(i2c_adr, I2C_ADDR_REG_ADDR, &i2c_adr_cfg, 1, 100000U);
+// //     i2c_adr = i2c_adr_cfg;
+// //     delay(3000);
 // }
 // void loop() {
 // //   data1[0] = 0x01;
 // //    M5.Ex_I2C.writeRegister(i2c_adr_cfg, 0xFD, data1, 1, 100000U);
-//   Serial.println("***********");
-//   M5.Display.println("***********");
+// //   Serial.println("***********");
+// //   M5.Display.println("***********");
 
-//   M5.Ex_I2C.readRegister(i2c_adr, MQ_CFG_REG_ADDR, data, 1, 400000U);
-//   Serial.printf("MQ_CFG_REG_ADDR: 0x%02x \n", data[0]);
-//   M5.Display.printf("MQ_CFG_REG_ADDR: 0x%02x \n", data[0]);
+// //   M5.Ex_I2C.readRegister(i2c_adr, MQ_CFG_REG_ADDR, data, 1, 400000U);
+// //   Serial.printf("MQ_CFG_REG_ADDR: 0x%02x \n", data[0]);
+// //   M5.Display.printf("MQ_CFG_REG_ADDR: 0x%02x \n", data[0]);
 
-//   M5.Ex_I2C.readRegister(i2c_adr, LED_CFG_REG_ADDR, data, 1, 400000U);
-//   Serial.printf("LED_CFG_REG_ADDR: 0x%02x \n", data[0]);
-//   M5.Display.printf("LED_CFG_REG_ADDR: 0x%02x \n", data[0]);
+// //   M5.Ex_I2C.readRegister(i2c_adr, LED_CFG_REG_ADDR, data, 1, 400000U);
+// //   Serial.printf("LED_CFG_REG_ADDR: 0x%02x \n", data[0]);
+// //   M5.Display.printf("LED_CFG_REG_ADDR: 0x%02x \n", data[0]);
 
-//   M5.Ex_I2C.readRegister(i2c_adr, MQ_HEAT_PIN_CFG_REG_ADDR, data, 2, 400000U);
-//   Serial.printf("MQ_HEAT_PIN_CFG_REG_ADDR: 0x%02x  0x%02x\n", data[0], data[1]);
-//   M5.Display.printf("MQ_HEAT_PIN_CFG_REG_ADDR: 0x%02x  0x%02x\n", data[0], data[1]);
+// //   M5.Ex_I2C.readRegister(i2c_adr, MQ_HEAT_PIN_CFG_REG_ADDR, data, 2, 400000U);
+// //   Serial.printf("MQ_HEAT_PIN_CFG_REG_ADDR: 0x%02x  0x%02x\n", data[0], data[1]);
+// //   M5.Display.printf("MQ_HEAT_PIN_CFG_REG_ADDR: 0x%02x  0x%02x\n", data[0], data[1]);
 
-//   M5.Ex_I2C.readRegister(i2c_adr, MQ_8B_ADC_REG_ADDR, data, 1, 400000U);
-//   Serial.printf("mq 8bit ADC: 0x%02x \n", data[0]);
-//   M5.Display.printf("mq 8bit ADC: 0x%02x \n", data[0]);
+// //   M5.Ex_I2C.readRegister(i2c_adr, MQ_8B_ADC_REG_ADDR, data, 1, 400000U);
+// //   Serial.printf("mq 8bit ADC: 0x%02x \n", data[0]);
+// //   M5.Display.printf("mq 8bit ADC: 0x%02x \n", data[0]);
 
-//   M5.Ex_I2C.readRegister(i2c_adr, MQ_12B_ADC_REG_ADDR, data, 2, 400000U);
-//   Serial.printf("mq 12bit ADC: 0x%02x  0x%02x\n", data[0], data[1]);
-//   M5.Display.printf("mq 12bit ADC: 0x%02x  0x%02x\n", data[0], data[1]);
+// //   M5.Ex_I2C.readRegister(i2c_adr, MQ_12B_ADC_REG_ADDR, data, 2, 400000U);
+// //   Serial.printf("mq 12bit ADC: 0x%02x  0x%02x\n", data[0], data[1]);
+// //   M5.Display.printf("mq 12bit ADC: 0x%02x  0x%02x\n", data[0], data[1]);
 
-//   M5.Ex_I2C.readRegister(i2c_adr, MQ_ADC_VALID_TAGS_REG_ADDR, data, 1, 400000U);
-//   Serial.printf("mq adc valid tags: 0x%02x \n", data[0]);
-//   M5.Display.printf("mq adc valid tags: 0x%02x \n", data[0]);
+// //   M5.Ex_I2C.readRegister(i2c_adr, MQ_ADC_VALID_TAGS_REG_ADDR, data, 1, 400000U);
+// //   Serial.printf("mq adc valid tags: 0x%02x \n", data[0]);
+// //   M5.Display.printf("mq adc valid tags: 0x%02x \n", data[0]);
 
-//   M5.Ex_I2C.readRegister(i2c_adr, INT_TEMP_8B_ADC_REG_ADDR, data, 1, 400000U);
-//   Serial.printf("NTC 8bit ADC: 0x%02x\n", data[0]);
-//   M5.Display.printf("NTC 8bit ADC: 0x%02x\n", data[0]);
+// //   M5.Ex_I2C.readRegister(i2c_adr, INT_TEMP_8B_ADC_REG_ADDR, data, 1, 400000U);
+// //   Serial.printf("NTC 8bit ADC: 0x%02x\n", data[0]);
+// //   M5.Display.printf("NTC 8bit ADC: 0x%02x\n", data[0]);
 
-//   M5.Ex_I2C.readRegister(i2c_adr, INT_TEMP_12B_ADC_REG_ADDR, data, 2, 400000U);
-//   Serial.printf("NTC 12bit ADC: 0x%02x  0x%02x\n", data[0], data[1]);
-//   M5.Display.printf("NTC 12bit ADC: 0x%02x  0x%02x\n", data[0], data[1]);
+// //   M5.Ex_I2C.readRegister(i2c_adr, INT_TEMP_12B_ADC_REG_ADDR, data, 2, 400000U);
+// //   Serial.printf("NTC 12bit ADC: 0x%02x  0x%02x\n", data[0], data[1]);
+// //   M5.Display.printf("NTC 12bit ADC: 0x%02x  0x%02x\n", data[0], data[1]);
 
-//   M5.Ex_I2C.readRegister(i2c_adr, INT_TEMP_VAL_REG_ADDR, data, 2, 400000U);
-//   Serial.printf("Internal temperature value: 0x%02x  0x%02x \n", data[0],
-//                 data[1]);
-//   Serial.printf("Internal temperature value: %d.%d \n", data[0], data[1]);
-//   M5.Display.printf("Internal temperature value: 0x%02x  0x%02x \n", data[0],
-//                 data[1]);
-//   M5.Display.printf("Internal temperature value: %d.%d \n", data[0], data[1]);
+// //   M5.Ex_I2C.readRegister(i2c_adr, INT_TEMP_VAL_REG_ADDR, data, 2, 400000U);
+// //   Serial.printf("Internal temperature value: 0x%02x  0x%02x \n", data[0],
+// //                 data[1]);
+// //   Serial.printf("Internal temperature value: %d.%d \n", data[0], data[1]);
+// //   M5.Display.printf("Internal temperature value: 0x%02x  0x%02x \n", data[0],
+// //                 data[1]);
+// //   M5.Display.printf("Internal temperature value: %d.%d \n", data[0], data[1]);
 
-//   M5.Ex_I2C.readRegister(i2c_adr, SW_VER_REG_ADDR, data, 1, 400000U);
-//   Serial.printf("software version: 0x%02x \n", data[0]);
-//   M5.Display.printf("software version: 0x%02x \n", data[0]);
+// //   M5.Ex_I2C.readRegister(i2c_adr, SW_VER_REG_ADDR, data, 1, 400000U);
+// //   Serial.printf("software version: 0x%02x \n", data[0]);
+// //   M5.Display.printf("software version: 0x%02x \n", data[0]);
 
-//   M5.Ex_I2C.readRegister(i2c_adr, I2C_ADDR_REG_ADDR, data, 1, 400000U);
-//   Serial.printf("i2c addr: 0x%02x \n", data[0]);
-//   Serial.println("***********");
-//   M5.Display.printf("i2c addr: 0x%02x \n", data[0]);
-//   M5.Display.println("***********");
+// //   M5.Ex_I2C.readRegister(i2c_adr, I2C_ADDR_REG_ADDR, data, 1, 400000U);
+// //   Serial.printf("i2c addr: 0x%02x \n", data[0]);
+// //   Serial.println("***********");
+// //   M5.Display.printf("i2c addr: 0x%02x \n", data[0]);
+// //   M5.Display.println("***********");
 //   delay(3000);
 // }
 

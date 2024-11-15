@@ -16,7 +16,7 @@ S_DEPS += \
 
 # Each subdirectory must supply rules for building sources it contributes
 Core/Startup/%.o: ../Core/Startup/%.s Core/Startup/subdir.mk
-	arm-none-eabi-gcc -mcpu=cortex-m0plus -g3 -DDEBUG -c -I"C:/Users/15191/Desktop/Chain3/Chain/Core/flash" -I"C:/Users/15191/Desktop/Chain3/Chain/Core/RGB" -I"C:/Users/15191/Desktop/Chain3/Chain/Core/Chain_Function" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m0plus -g3 -DDEBUG -c -I"C:/Users/15191/Desktop/chainV5/Chain_Encoder/APP/Core/flash" -I"C:/Users/15191/Desktop/chainV5/Chain_Encoder/APP/Core/RGB" -I"C:/Users/15191/Desktop/chainV5/Chain_Encoder/APP/Core/Chain_Function" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@" "$<"
 
 clean: clean-Core-2f-Startup
 

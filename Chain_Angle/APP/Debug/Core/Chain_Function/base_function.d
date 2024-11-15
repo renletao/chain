@@ -1,7 +1,7 @@
 Core/Chain_Function/base_function.o: \
  ../Core/Chain_Function/base_function.c \
- ../Core/Chain_Function/../Chain_Function/base_function.h \
- ../Core/Inc/main.h ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h \
+ ../Core/Chain_Function/base_function.h ../Core/Inc/main.h \
+ ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h \
  ../Core/Inc/stm32g0xx_hal_conf.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_rcc.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_def.h \
@@ -45,7 +45,7 @@ Core/Chain_Function/base_function.o: \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_dma.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h \
  ../Core/Inc/usart.h ../Core/Inc/main.h
-../Core/Chain_Function/../Chain_Function/base_function.h:
+../Core/Chain_Function/base_function.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h:
 ../Core/Inc/stm32g0xx_hal_conf.h:

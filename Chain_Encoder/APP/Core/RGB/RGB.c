@@ -111,7 +111,7 @@ static void rgb_send_array(void) {
  * @param None
  * @retval None
  */
-static void turn_off_all_handle(void) {
+void turn_off_all_handle(void) {
     // Set the first RGB LED color to black (off)
     rgb_setcolor(0, BLACK);
 
@@ -164,21 +164,21 @@ void chain_set_rgb_value(uint8_t *buffer, uint16_t size) {
         // Send the updated RGB array to reflect the new color
         rgb_send_array();
 
-        // Prepare the response buffer indicating success
-        s_ret_buf_size = 0;
-        s_ret_buf[s_ret_buf_size++] = RGB_OPERATION_SUCCESS;
+       // Prepare the response buffer indicating success
+       s_ret_buf_size = 0;
+       s_ret_buf[s_ret_buf_size++] = RGB_OPERATION_SUCCESS;
 
-        // Send a command complete response
-        chain_command_complete_return(CHAIN_SET_RGB_VALUE, s_ret_buf,
-                                      s_ret_buf_size);
+       // Send a command complete response
+       chain_command_complete_return(CHAIN_SET_RGB_VALUE, s_ret_buf,
+                                     s_ret_buf_size);
     } else {
         // Prepare the response buffer indicating failure due to incorrect size
-        s_ret_buf_size = 0;
-        s_ret_buf[s_ret_buf_size++] = RGB_OPERATION_FAIL;
+       s_ret_buf_size = 0;
+       s_ret_buf[s_ret_buf_size++] = RGB_OPERATION_FAIL;
 
-        // Send a command complete response for failure
-        chain_command_complete_return(CHAIN_SET_RGB_VALUE, s_ret_buf,
-                                      s_ret_buf_size);
+       // Send a command complete response for failure
+       chain_command_complete_return(CHAIN_SET_RGB_VALUE, s_ret_buf,
+                                     s_ret_buf_size);
     }
 }
 

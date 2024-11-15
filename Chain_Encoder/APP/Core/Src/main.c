@@ -1,4 +1,4 @@
-/* USER CODE BEGIN Header */
+///* USER CODE BEGIN Header */
 /**
  ******************************************************************************
  * @file           : main.c
@@ -39,9 +39,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-__IO int16_t g_encoder_count = 0;      // Encoder total count
-__IO int16_t g_increment_count = 0;    // Encoder increment count
-__IO uint8_t g_encoder_direct = 0;     // Encoder direction: 0->AB, 1->BA
+__IO int16_t g_encoder_count = 0;   // Encoder total count
+__IO int16_t g_increment_count = 0; // Encoder increment count
+__IO uint8_t g_encoder_direct = 0;  // Encoder direction: 0->AB, 1->BA
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -53,20 +53,25 @@ __IO uint8_t g_encoder_direct = 0;     // Encoder direction: 0->AB, 1->BA
 
 /* USER CODE BEGIN PV */
 // DMA receive buffers
-__IO uint8_t g_uart_in_rx_buf[2][BUFFER_SIZE]; // uart_in receive buffer for DMA
-__IO uint8_t
-    g_uart_out_rx_buf[2][BUFFER_SIZE]; // uart_out receive buffer for DMA
+__IO uint8_t g_uart_in_rx_buf[UART_BUFFER_SIZE][BUFFER_SIZE * 2];  // uart_in
+                                                                   // receive
+                                                                   // buffer for
+                                                                   // DMA
+__IO uint8_t g_uart_out_rx_buf[UART_BUFFER_SIZE][BUFFER_SIZE * 2]; // uart_out
+                                                                   // receive
+                                                                   // buffer for
+                                                                   // DMA
 
 // Transmission status for UART
-__IO uint8_t g_uart_in_tx_status =
-    0; // Status of uart_in transmission (0: not transmitting, 1: transmitting)
-__IO uint8_t g_uart_out_tx_status =
-    0; // Status of uart_out transmission (0: not transmitting, 1: transmitting)
+__IO uint8_t g_uart_in_rx_index =
+    0; // Index for UART input (receiving) buffer position
+__IO uint8_t g_uart_out_rx_index =
+    0; // Index for UART output (receiving) buffer position
 
 // Transmission complete flags for UART
-__IO uint8_t g_uart_in_transmit_commplete =
+__IO uint8_t g_uart_in_transmit_complete =
     1; // Flag indicating if uart_in transmission is complete (1: complete)
-__IO uint8_t g_uart_out_transmit_commplete =
+__IO uint8_t g_uart_out_transmit_complete =
     1; // Flag indicating if uart_out transmission is complete (1: complete)
 
 // Command buffer and related variables
@@ -89,11 +94,17 @@ __IO uint16_t g_device_type = (uint8_t)(
     PRODUCT_TYPE_LOW);    // Combined product type from high and low bytes
 __IO uint8_t g_light = 0; // Light status or value
 
+__IO static uint32_t s_last_press_time =
+    0; // Store the last press time in milliseconds
+
+__IO static uint8_t s_key_flag = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+
 
 /* USER CODE END PFP */
 
@@ -159,11 +170,10 @@ void chain_init(void) {
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
-{
+ * @brief  The application entry point.
+ * @retval int
+ */
+int main(void) {
 
   /* USER CODE BEGIN 1 */
   iap_set();
@@ -172,7 +182,8 @@ int main(void)
 
   /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick.
+   */
   HAL_Init();
 
   /* USER CODE BEGIN Init */
@@ -196,15 +207,28 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM16_Init();
   MX_TIM3_Init();
+  MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
   rgb_init();
-  encoder_init();                // encoder init
-  LL_TIM_EnableIT_UPDATE(TIM14); // ENABLE TIM14
-  LL_TIM_EnableCounter(TIM14);   // ENABLE TIM14
+  encoder_init(); // encoder init
+  HAL_Delay(1);
+  LL_TIM_ClearFlag_UPDATE(TIM14); // Clear update TIM14
+  LL_TIM_EnableIT_UPDATE(TIM14);  // ENABLE TIM14
+  LL_TIM_EnableCounter(TIM14);    // ENABLE TIM14
+  HAL_Delay(1);
+  LL_TIM_ClearFlag_UPDATE(TIM17); // Clear update TIM17
+  LL_TIM_EnableIT_UPDATE(TIM17);  // ENABLE TIM17
+  LL_TIM_EnableCounter(TIM17);    // ENABLE TIM17
+  HAL_Delay(1);
+  LL_TIM_ClearFlag_UPDATE(TIM16); // Clear update TIM16
+  LL_TIM_EnableIT_UPDATE(TIM16);  // ENABLE TIM16
+  LL_TIM_EnableCounter(TIM16);    // ENABLE TIM16
+  HAL_Delay(1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1) {
     encoder_update();
     if (g_cmd_status == CMD_SPACE_BUSY_STATUS) {
@@ -260,28 +284,33 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    if(s_key_flag && g_uart_in_transmit_complete){
+    	key_press_down_send();
+    	s_key_flag = 0;
+    }
     LL_IWDG_ReloadCounter(IWDG);
   }
+
   /* USER CODE END 3 */
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
-{
+ * @brief System Clock Configuration
+ * @retval None
+ */
+void SystemClock_Config(void) {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
-  */
+   */
   HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
+   * in the RCC_OscInitTypeDef structure.
+   */
+  RCC_OscInitStruct.OscillatorType =
+      RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_LSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -293,41 +322,53 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV4;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
     Error_Handler();
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1;
+   */
+  RCC_ClkInitStruct.ClockType =
+      RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-  {
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {
     Error_Handler();
   }
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
-{
-  if (GPIO_Pin == BTN1_Pin)
-  {
-    key_press_down_send();
+/**
+ * @brief GPIO EXTI falling edge interrupt callback (Button Press).
+ * @note This function is triggered by the falling edge of the button press.
+ *       It incorporates debouncing logic to only trigger the event once every
+ * 200ms.
+ * @param GPIO_Pin GPIO pin that triggered the interrupt.
+ * @retval None
+ */
+void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin) {
+  if (GPIO_Pin == BTN1_Pin) {
+    uint32_t current_time =
+        HAL_GetTick(); // Get current system tick in milliseconds
+
+    // Check if debounce time has passed (current time - last press time >=
+    // debounce time)
+    if (current_time - s_last_press_time >= DEBOUNCE_TIME_MS) {
+      s_key_flag = 1;
+      // Update the last press time
+      s_last_press_time = current_time;
+    }
   }
 }
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
-{
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
+void Error_Handler(void) {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
@@ -336,16 +377,15 @@ void Error_Handler(void)
   /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
+void assert_failed(uint8_t *file, uint32_t line) {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line
      number,

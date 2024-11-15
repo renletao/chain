@@ -43,7 +43,7 @@ Core/Src/stm32g0xx_it.o: ../Core/Src/stm32g0xx_it.c ../Core/Inc/main.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_dma.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h \
  ../Core/Inc/stm32g0xx_it.h ../Core/Inc/usart.h ../Core/Inc/main.h \
- C:/Users/15191/Desktop/chain/Chain_Joystick/APP/Core/Chain_Function/base_function.h
+ C:/Users/15191/Desktop/chainV5/Chain_Joystick/APP/Core/Chain_Function/base_function.h
 ../Core/Inc/main.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h:
 ../Core/Inc/stm32g0xx_hal_conf.h:
@@ -91,4 +91,4 @@ Core/Src/stm32g0xx_it.o: ../Core/Src/stm32g0xx_it.c ../Core/Inc/main.h \
 ../Core/Inc/stm32g0xx_it.h:
 ../Core/Inc/usart.h:
 ../Core/Inc/main.h:
-C:/Users/15191/Desktop/chain/Chain_Joystick/APP/Core/Chain_Function/base_function.h:
+C:/Users/15191/Desktop/chainV5/Chain_Joystick/APP/Core/Chain_Function/base_function.h:

@@ -44,9 +44,9 @@ Core/Src/i2c.o: ../Core/Src/i2c.c ../Core/Inc/i2c.h ../Core/Inc/main.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_gpio.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_dma.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h \
- C:/Users/15191/Desktop/Chain_Uart/APP/Core/Chain_Function/uart_function.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/Chain_Function/uart_function.h \
  ../Core/Inc/main.h ../Core/Inc/usart.h \
- C:/Users/15191/Desktop/Chain_Uart/APP/Core/Chain_Function/base_function.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/Chain_Function/base_function.h \
  ../Core/Inc/adc.h
 ../Core/Inc/i2c.h:
 ../Core/Inc/main.h:
@@ -95,8 +95,8 @@ Core/Src/i2c.o: ../Core/Src/i2c.c ../Core/Inc/i2c.h ../Core/Inc/main.h \
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_gpio.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_dma.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h:
-C:/Users/15191/Desktop/Chain_Uart/APP/Core/Chain_Function/uart_function.h:
+C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/Chain_Function/uart_function.h:
 ../Core/Inc/main.h:
 ../Core/Inc/usart.h:
-C:/Users/15191/Desktop/Chain_Uart/APP/Core/Chain_Function/base_function.h:
+C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/Chain_Function/base_function.h:
 ../Core/Inc/adc.h:

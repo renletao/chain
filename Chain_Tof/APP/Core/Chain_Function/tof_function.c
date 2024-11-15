@@ -24,7 +24,7 @@ void chain_tof_get_distance(void)
 	sprintf((char *)strbuf, "distance : %d", g_tof_distance); // Format distance message
 	usart1_transmit_dma(strbuf, strlen((char *)strbuf)); // Transmit the message via UART
 #else
-	chain_command_complete_return(CHAIN_TOF_GET_DISTANCE, (uint8_t *)&g_tof_distance, 1); // Return distance via command
+	chain_command_complete_return(CHAIN_TOF_GET_DISTANCE, (uint8_t *)&g_tof_distance, 2); // Return distance via command
 #endif
 }
 

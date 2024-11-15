@@ -52,33 +52,40 @@
 
 /* USER CODE BEGIN PV */
 // DMA receive buffers
-__IO uint8_t g_uart_in_rx_buf[2][BUFFER_SIZE];	// uart_in receive buffer for DMA
-__IO uint8_t g_uart_out_rx_buf[2][BUFFER_SIZE]; // uart_out receive buffer for DMA
+__IO uint8_t g_uart_in_rx_buf[UART_BUFFER_SIZE][BUFFER_SIZE * 2];  // uart_in receive buffer for DMA
+__IO uint8_t g_uart_out_rx_buf[UART_BUFFER_SIZE][BUFFER_SIZE * 2]; // uart_out receive buffer for DMA
 
 // Transmission status for UART
-__IO uint8_t g_uart_in_tx_status = 0;  // Status of uart_in transmission (0: not transmitting, 1: transmitting)
-__IO uint8_t g_uart_out_tx_status = 0; // Status of uart_out transmission (0: not transmitting, 1: transmitting)
+__IO uint8_t g_uart_in_rx_index = 0;  // Index for UART input (receiving) buffer position
+__IO uint8_t g_uart_out_rx_index = 0; // Index for UART output (receiving) buffer position
 
 // Transmission complete flags for UART
-__IO uint8_t g_uart_in_transmit_commplete = 1;	// Flag indicating if uart_in transmission is complete (1: complete)
-__IO uint8_t g_uart_out_transmit_commplete = 1; // Flag indicating if uart_out transmission is complete (1: complete)
+__IO uint8_t g_uart_in_transmit_complete = 1;  // Flag indicating if uart_in transmission is complete (1: complete)
+__IO uint8_t g_uart_out_transmit_complete = 1; // Flag indicating if uart_out transmission is complete (1: complete)
 
 // Command buffer and related variables
-__IO uint8_t g_cmd_buf[BUFFER_SIZE] = {0};		   // Command buffer initialized to zero
-__IO uint8_t g_cmd_size = 0;					   // Size of the command currently in the buffer
-__IO uint8_t g_cmd_status = CMD_SPACE_IDLE_STATUS; // Status of the command processing
+__IO uint8_t g_cmd_buf[BUFFER_SIZE] = {0}; // Command buffer initialized to zero
+__IO uint8_t g_cmd_size = 0; // Size of the command currently in the buffer
+__IO uint8_t g_cmd_status =
+    CMD_SPACE_IDLE_STATUS; // Status of the command processing
 
 // Device status variables
-__IO uint8_t g_tail_status = CHAIN_TAIL_DEVICE;		// Status of the tail device in the chain
-__IO uint8_t g_heart_beat_record = 0;				// Heartbeat record for monitoring device status
-__IO uint8_t g_bootloader_version = 0;				// Version of the bootloader
+__IO uint8_t g_tail_status =
+    CHAIN_TAIL_DEVICE; // Status of the tail device in the chain
+__IO uint8_t g_heart_beat_record =
+    0; // Heartbeat record for monitoring device status
+__IO uint8_t g_bootloader_version = 0;              // Version of the bootloader
 __IO uint8_t g_firmware_version = SOFTWARE_VERSION; // Version of the firmware
 
 // Device type information
-__IO uint16_t g_device_type = (uint8_t)((PRODUCT_TYPE_HIGH << 8) | PRODUCT_TYPE_LOW); // Combined product type from high and low bytes
-__IO uint8_t g_light = 0;															  // Light status or value
+__IO uint16_t g_device_type = (uint8_t)(
+    (PRODUCT_TYPE_HIGH << 8) |
+    PRODUCT_TYPE_LOW);    // Combined product type from high and low bytes
+__IO uint8_t g_light = 0; // Light status or value
 
-uint8_t g_clockwise_status = 0; // Status indicating the direction of rotation (0: counter-clockwise, 1: clockwise)
+uint8_t g_clockwise_status = 0; // Status indicating the direction of rotation
+                                // (0: counter-clockwise, 1: clockwise)
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -94,23 +101,22 @@ void SystemClock_Config(void);
  * @param None
  * @retval None
  */
-void iap_set(void)
-{
-	uint8_t i;									  // Loop index
-	uint32_t *pVecTab = (uint32_t *)(0x20000000); // Pointer to the vector table in SRAM
+void iap_set(void) {
+  uint8_t i; // Loop index
+  uint32_t *pVecTab =
+      (uint32_t *)(0x20000000); // Pointer to the vector table in SRAM
 
-	// Copy the interrupt vector table from the application address to SRAM
-	for (i = 0; i < 48; i++)
-	{
-		// Copy each vector entry to the SRAM vector table
-		*(pVecTab++) = *(__IO uint32_t *)(APPLICATION_ADDRESS + (i << 2));
-	}
+  // Copy the interrupt vector table from the application address to SRAM
+  for (i = 0; i < 48; i++) {
+    // Copy each vector entry to the SRAM vector table
+    *(pVecTab++) = *(__IO uint32_t *)(APPLICATION_ADDRESS + (i << 2));
+  }
 
-	// Enable the SYSCFG peripheral clock
-	__HAL_RCC_SYSCFG_CLK_ENABLE();
+  // Enable the SYSCFG peripheral clock
+  __HAL_RCC_SYSCFG_CLK_ENABLE();
 
-	// Remap the memory to use SRAM for the vector table
-	__HAL_SYSCFG_REMAPMEMORY_SRAM();
+  // Remap the memory to use SRAM for the vector table
+  __HAL_SYSCFG_REMAPMEMORY_SRAM();
 }
 
 /**
@@ -118,32 +124,27 @@ void iap_set(void)
  * @param None
  * @retval None
  */
-void chain_init(void)
-{
-	// Retrieve bootloader version number
-	g_bootloader_version = get_bootloader_version();
+void chain_init(void) {
+  // Retrieve bootloader version number
+  g_bootloader_version = get_bootloader_version();
 
-	// Check the clockwise status
-	if (get_clockwise_status() == 0xFF)
-	{													// If the status is not set
-		g_clockwise_status = CHAIN_ANGLE_CLOCKWISE_INC; // Set to default clockwise increment value
-		set_clockwise_status(g_clockwise_status);		// Update the status in the system
-	}
-	else
-	{
-		g_clockwise_status = get_clockwise_status(); // Retrieve the current clockwise status
-	}
+  // Check the clockwise status
+  if (get_clockwise_status() == 0xFF) { // If the status is not set
+    g_clockwise_status =
+        CHAIN_ANGLE_CLOCKWISE_INC; // Set to default clockwise increment value
+    set_clockwise_status(g_clockwise_status); // Update the status in the system
+  } else {
+    g_clockwise_status =
+        get_clockwise_status(); // Retrieve the current clockwise status
+  }
 
-	// Check the RGB light status
-	if (get_rgb_light() == 0xFF)
-	{							  // If the RGB light status is not set
-		g_light = RGB_LIGHT_BASE; // Set to the base light value
-		set_rgb_light(g_light);	  // Update the light status in the system
-	}
-	else
-	{
-		g_light = get_rgb_light(); // Retrieve the current RGB light status
-	}
+  // Check the RGB light status
+  if (get_rgb_light() == 0xFF) { // If the RGB light status is not set
+    g_light = RGB_LIGHT_BASE;    // Set to the base light value
+    set_rgb_light(g_light);      // Update the light status in the system
+  } else {
+    g_light = get_rgb_light(); // Retrieve the current RGB light status
+  }
 }
 
 /* USER CODE END 0 */
@@ -156,8 +157,8 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	iap_set();
-	chain_init();
+  iap_set();
+  chain_init();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -186,68 +187,76 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM16_Init();
   MX_ADC1_Init();
+  MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
-	rgb_init();							 
-	HAL_ADCEx_Calibration_Start(&hadc1); 
-	LL_TIM_EnableIT_UPDATE(TIM14);		 // ENABLE TIM14
-	LL_TIM_EnableCounter(TIM14);		 // ENABLE TIM14
+  rgb_init();
+  HAL_ADCEx_Calibration_Start(&hadc1);
+  HAL_Delay(1);
+	LL_TIM_ClearFlag_UPDATE(TIM14); // Clear update TIM14
+	LL_TIM_EnableIT_UPDATE(TIM14);	// ENABLE TIM14
+	LL_TIM_EnableCounter(TIM14);	// ENABLE TIM14
+	HAL_Delay(1);
+	LL_TIM_ClearFlag_UPDATE(TIM17); // Clear update TIM17
+	LL_TIM_EnableIT_UPDATE(TIM17);	// ENABLE TIM17
+	LL_TIM_EnableCounter(TIM17);	// ENABLE TIM17
+	HAL_Delay(1);
+	LL_TIM_ClearFlag_UPDATE(TIM16); // Clear update TIM16
+	LL_TIM_EnableIT_UPDATE(TIM16);	// ENABLE TIM16
+	LL_TIM_EnableCounter(TIM16);	// ENABLE TIM16
+	HAL_Delay(1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	while (1)
-	{
-		if (g_cmd_status == CMD_SPACE_BUSY_STATUS)
-		{
-			switch (g_cmd_buf[0])
-			{
-			case CHAIN_ANGLE_PGET_8ADC:
-				chain_angle_get_8value();
-				break;
-			case CHAIN_ANGLE_GET_12ADC:
-				chain_angle_get_12value();
-				break;
-			case CHAIN_ANGLE_GET_CLOCKWISE_STATUS:
-				chain_angle_get_clockwise();
-				break;
-			case CHAIN_ANGLE_SET_CLOCKWISE_STATUS:
-				chain_angle_set_clockwise(g_cmd_buf[1]);
-				break;
-			case CHAIN_SET_RGB_VALUE:
-				chain_set_rgb_value((uint8_t *)(g_cmd_buf + 1),
-									(g_cmd_size - 1));
-				break;
-			case CHAIN_GET_RGB_VALUE:
-				chain_get_rgb_value();
-				break;
-			case CHAIN_SET_RGB_LIGHT:
-				chain_set_light_value(g_cmd_buf[1]);
-				break;
-			case CHAIN_GET_RGB_LIGHT:
-				chain_get_light_value();
-				break;
-			case CHAIN_GET_BOOTLOADER_VERSION:
-				chain_get_bootloader_version_handle();
-				break;
-			case CHAIN_GET_VERSION_DEVICE:
-				chain_get_firmware_version_handle();
-				break;
-			case CHAIN_GET_DEVICE_TYPE:
-				chain_get_device_type_handle();
-				break;
-			case CHAIN_IAP_UPDATE:
-				chain_iap_update_handle(g_cmd_buf[1]);
-				break;
-			default:
-				break;
-			}
-			g_cmd_status = CMD_SPACE_IDLE_STATUS;
-		}
+  while (1) {
+    if (g_cmd_status == CMD_SPACE_BUSY_STATUS) {
+      switch (g_cmd_buf[0]) {
+      case CHAIN_ANGLE_PGET_8ADC:
+        chain_angle_get_8value();
+        break;
+      case CHAIN_ANGLE_GET_12ADC:
+        chain_angle_get_12value();
+        break;
+      case CHAIN_ANGLE_GET_CLOCKWISE_STATUS:
+        chain_angle_get_clockwise();
+        break;
+      case CHAIN_ANGLE_SET_CLOCKWISE_STATUS:
+        chain_angle_set_clockwise(g_cmd_buf[1]);
+        break;
+      case CHAIN_SET_RGB_VALUE:
+        chain_set_rgb_value((uint8_t *)(g_cmd_buf + 1), (g_cmd_size - 1));
+        break;
+      case CHAIN_GET_RGB_VALUE:
+        chain_get_rgb_value();
+        break;
+      case CHAIN_SET_RGB_LIGHT:
+        chain_set_light_value(g_cmd_buf[1]);
+        break;
+      case CHAIN_GET_RGB_LIGHT:
+        chain_get_light_value();
+        break;
+      case CHAIN_GET_BOOTLOADER_VERSION:
+        chain_get_bootloader_version_handle();
+        break;
+      case CHAIN_GET_VERSION_DEVICE:
+        chain_get_firmware_version_handle();
+        break;
+      case CHAIN_GET_DEVICE_TYPE:
+        chain_get_device_type_handle();
+        break;
+      case CHAIN_IAP_UPDATE:
+        chain_iap_update_handle(g_cmd_buf[1]);
+        break;
+      default:
+        break;
+      }
+      g_cmd_status = CMD_SPACE_IDLE_STATUS;
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		LL_IWDG_ReloadCounter(IWDG);
-	}
+    LL_IWDG_ReloadCounter(IWDG);
+  }
   /* USER CODE END 3 */
 }
 
@@ -309,11 +318,10 @@ void SystemClock_Config(void)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-	/* User can add his own implementation to report the HAL error return state */
-	__disable_irq();
-	while (1)
-	{
-	}
+  /* User can add his own implementation to report the HAL error return state */
+  __disable_irq();
+  while (1) {
+  }
   /* USER CODE END Error_Handler_Debug */
 }
 
@@ -328,8 +336,9 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-	/* User can add his own implementation to report the file name and line number,
-	   ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  /* User can add his own implementation to report the file name and line
+     number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

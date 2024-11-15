@@ -15,7 +15,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "usart.h"
-
+#define TIMEOUT_DURATION (20)
 #define CHECK_PASS  (1)               // Check passed
 #define CHECK_ERROR (0)               // Check not passed
 #define SOFTWARE_VERSION (1)          // Software version
@@ -47,8 +47,8 @@ typedef enum {
 	CHAIN_ENUM_PLEASE_DATA_PACK,                      // Enumeration request data packet
 } data_pack_t; // Data packet type
 
-extern __IO uint8_t g_uart_in_transmit_commplete;   // UART in transmission complete flag
-extern __IO uint8_t g_uart_out_transmit_commplete;  // UART in transmission complete flag
+extern __IO uint8_t g_uart_in_transmit_complete;   // UART in transmission complete flag
+extern __IO uint8_t g_uart_out_transmit_complete;  // UART in transmission complete flag
 extern __IO uint8_t g_cmd_buf[BUFFER_SIZE];         // Command buffer
 extern __IO uint8_t g_cmd_size;                     // Buffer size, default 0
 extern __IO uint8_t g_cmd_status;                   // Command status, default idle
@@ -58,8 +58,6 @@ extern __IO uint8_t g_bootloader_version;           // IAP version number
 extern __IO uint8_t g_firmware_version;             // Software version number
 extern __IO uint16_t g_device_type;                 // Device type
 extern uint8_t g_heartbeat_data_pack_buf[9];        // Heartbeat packet
-extern uint8_t g_heartbeat_reply_status_buf[3];     // Reply status
-extern uint8_t g_reply_index;                       // Reply status index
 
 
 void add_pack_head(void);                                          		// Add packet header
@@ -77,7 +75,6 @@ void chain_enum_handle(uint8_t *buffer, uint16_t size);     	    	// Handle enum
 void chain_enum_return_handle(uint8_t *buffer, uint16_t size);      	// Handle enumeration return packet
 void chain_enum_please_handle(uint8_t *buffer, uint16_t size);      	// Handle enumeration request packet
 void chain_heartbeat_in_receive_handle(void);        	            	// Handle incoming heartbeat packet
-void chain_heartbeat_out_receive_handle(void);        	            	// Handle outgoing heartbeat packet
 void chain_deal_data_packet_handle(uint8_t *buffer, uint16_t size); 	// Handle data packet
 void chain_out_relay_handle(uint8_t *buffer, uint16_t size); 	        // Outgoing relay
 void chain_in_relay_handle(uint8_t *buffer, uint16_t size);  			// Incoming relay

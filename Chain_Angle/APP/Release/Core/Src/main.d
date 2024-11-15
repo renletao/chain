@@ -45,12 +45,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/dma.h \
  ../Core/Inc/iwdg.h ../Core/Inc/tim.h ../Core/Inc/usart.h \
  ../Core/Inc/gpio.h \
- C:/Users/15191/Desktop/chain/Chain_Angle/APP/Core/RGB/RGB.h \
- C:/Users/15191/Desktop/chain/Chain_Angle/APP/Core/Chain_Function/base_function.h \
- C:/Users/15191/Desktop/chain/Chain_Angle/APP/Core/flash/myflash.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Angle/APP/Core/RGB/RGB.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Angle/APP/Core/Chain_Function/base_function.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Angle/APP/Core/flash/myflash.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h \
- C:/Users/15191/Desktop/chain/Chain_Angle/APP/Core/Chain_Function/angle_function.h \
- C:/Users/15191/Desktop/chain/Chain_Angle/APP/Core/Chain_Function/base_function.h
+ C:/Users/15191/Desktop/chainV5/Chain_Angle/APP/Core/Chain_Function/angle_function.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Angle/APP/Core/Chain_Function/base_function.h
 ../Core/Inc/main.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal.h:
 ../Core/Inc/stm32g0xx_hal_conf.h:
@@ -102,9 +102,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/tim.h:
 ../Core/Inc/usart.h:
 ../Core/Inc/gpio.h:
-C:/Users/15191/Desktop/chain/Chain_Angle/APP/Core/RGB/RGB.h:
-C:/Users/15191/Desktop/chain/Chain_Angle/APP/Core/Chain_Function/base_function.h:
-C:/Users/15191/Desktop/chain/Chain_Angle/APP/Core/flash/myflash.h:
+C:/Users/15191/Desktop/chainV5/Chain_Angle/APP/Core/RGB/RGB.h:
+C:/Users/15191/Desktop/chainV5/Chain_Angle/APP/Core/Chain_Function/base_function.h:
+C:/Users/15191/Desktop/chainV5/Chain_Angle/APP/Core/flash/myflash.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h:
-C:/Users/15191/Desktop/chain/Chain_Angle/APP/Core/Chain_Function/angle_function.h:
-C:/Users/15191/Desktop/chain/Chain_Angle/APP/Core/Chain_Function/base_function.h:
+C:/Users/15191/Desktop/chainV5/Chain_Angle/APP/Core/Chain_Function/angle_function.h:
+C:/Users/15191/Desktop/chainV5/Chain_Angle/APP/Core/Chain_Function/base_function.h:

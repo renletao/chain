@@ -48,7 +48,7 @@ Core/Chain_Function/uart_function.o: \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h \
  ../Core/Inc/usart.h ../Core/Inc/main.h \
  ../Core/Chain_Function/base_function.h ../Core/Inc/i2c.h \
- C:/Users/15191/Desktop/chain/Chain_Uart/APP/Core/Chain_Function/uart_function.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/Chain_Function/uart_function.h \
  ../Core/Inc/adc.h
 ../Core/Chain_Function/uart_function.h:
 ../Core/Inc/main.h:
@@ -101,5 +101,5 @@ Core/Chain_Function/uart_function.o: \
 ../Core/Inc/main.h:
 ../Core/Chain_Function/base_function.h:
 ../Core/Inc/i2c.h:
-C:/Users/15191/Desktop/chain/Chain_Uart/APP/Core/Chain_Function/uart_function.h:
+C:/Users/15191/Desktop/chainV5/Chain_Uart/APP/Core/Chain_Function/uart_function.h:
 ../Core/Inc/adc.h:

@@ -22,12 +22,14 @@
 
 /* USER CODE BEGIN 0 */
 
+circular_buffer tx_in_buffer = {0};
+circular_buffer tx_out_buffer = {0};
+
 /* USER CODE END 0 */
 
 /* USART1 init function */
 
-void MX_USART1_UART_Init(void)
-{
+void MX_USART1_UART_Init(void) {
 
   /* USER CODE BEGIN USART1_Init 0 */
 
@@ -42,8 +44,7 @@ void MX_USART1_UART_Init(void)
   */
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1;
   PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK1;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-  {
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
     Error_Handler();
   }
 
@@ -76,7 +77,8 @@ void MX_USART1_UART_Init(void)
   /* USART1_RX Init */
   LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_1, LL_DMAMUX_REQ_USART1_RX);
 
-  LL_DMA_SetDataTransferDirection(DMA1, LL_DMA_CHANNEL_1, LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+  LL_DMA_SetDataTransferDirection(DMA1, LL_DMA_CHANNEL_1,
+                                  LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
 
   LL_DMA_SetChannelPriorityLevel(DMA1, LL_DMA_CHANNEL_1, LL_DMA_PRIORITY_LOW);
 
@@ -93,7 +95,8 @@ void MX_USART1_UART_Init(void)
   /* USART1_TX Init */
   LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_2, LL_DMAMUX_REQ_USART1_TX);
 
-  LL_DMA_SetDataTransferDirection(DMA1, LL_DMA_CHANNEL_2, LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+  LL_DMA_SetDataTransferDirection(DMA1, LL_DMA_CHANNEL_2,
+                                  LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
 
   LL_DMA_SetChannelPriorityLevel(DMA1, LL_DMA_CHANNEL_2, LL_DMA_PRIORITY_LOW);
 
@@ -135,18 +138,16 @@ void MX_USART1_UART_Init(void)
   LL_USART_Enable(USART1);
 
   /* Polling USART1 initialisation */
-  while((!(LL_USART_IsActiveFlag_TEACK(USART1))) || (!(LL_USART_IsActiveFlag_REACK(USART1))))
-  {
+  while ((!(LL_USART_IsActiveFlag_TEACK(USART1))) ||
+         (!(LL_USART_IsActiveFlag_REACK(USART1)))) {
   }
   /* USER CODE BEGIN USART1_Init 2 */
-	usart1_hart_init();
+  usart1_hart_init();
   /* USER CODE END USART1_Init 2 */
-
 }
 /* USART2 init function */
 
-void MX_USART2_UART_Init(void)
-{
+void MX_USART2_UART_Init(void) {
 
   /* USER CODE BEGIN USART2_Init 0 */
 
@@ -185,7 +186,8 @@ void MX_USART2_UART_Init(void)
   /* USART2_RX Init */
   LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_3, LL_DMAMUX_REQ_USART2_RX);
 
-  LL_DMA_SetDataTransferDirection(DMA1, LL_DMA_CHANNEL_3, LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+  LL_DMA_SetDataTransferDirection(DMA1, LL_DMA_CHANNEL_3,
+                                  LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
 
   LL_DMA_SetChannelPriorityLevel(DMA1, LL_DMA_CHANNEL_3, LL_DMA_PRIORITY_LOW);
 
@@ -202,7 +204,8 @@ void MX_USART2_UART_Init(void)
   /* USART2_TX Init */
   LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_4, LL_DMAMUX_REQ_USART2_TX);
 
-  LL_DMA_SetDataTransferDirection(DMA1, LL_DMA_CHANNEL_4, LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+  LL_DMA_SetDataTransferDirection(DMA1, LL_DMA_CHANNEL_4,
+                                  LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
 
   LL_DMA_SetChannelPriorityLevel(DMA1, LL_DMA_CHANNEL_4, LL_DMA_PRIORITY_LOW);
 
@@ -241,13 +244,12 @@ void MX_USART2_UART_Init(void)
   LL_USART_Enable(USART2);
 
   /* Polling USART2 initialisation */
-  while((!(LL_USART_IsActiveFlag_TEACK(USART2))) || (!(LL_USART_IsActiveFlag_REACK(USART2))))
-  {
+  while ((!(LL_USART_IsActiveFlag_TEACK(USART2))) ||
+         (!(LL_USART_IsActiveFlag_REACK(USART2)))) {
   }
   /* USER CODE BEGIN USART2_Init 2 */
-	usart2_hart_init();
+  usart2_hart_init();
   /* USER CODE END USART2_Init 2 */
-
 }
 
 /* USER CODE BEGIN 1 */
@@ -256,48 +258,50 @@ void MX_USART2_UART_Init(void)
  * @note This function configures USART1 to operate in both transmit (TX) and
  *       receive (RX) modes. It sets up the DMA channels for data transfer,
  *       enables idle line interrupts to detect the end of data reception,
- *       and configures necessary settings for efficient data transmission and reception.
+ *       and configures necessary settings for efficient data transmission and
+ * reception.
  *
  * @param  None
  * @retval None
  */
 void usart1_hart_init(void) {
-	// Set USART1 to operate in TX and RX mode
-	LL_USART_SetTransferDirection(USART1, LL_USART_DIRECTION_TX_RX);
+  // Set USART1 to operate in TX and RX mode
+  LL_USART_SetTransferDirection(USART1, LL_USART_DIRECTION_TX_RX);
 
-	// Enable idle line interrupt for USART1 to detect when data reception is complete
-	LL_USART_EnableIT_IDLE(USART1);
+  // Enable idle line interrupt for USART1 to detect when data reception is
+  // complete
+  LL_USART_EnableIT_IDLE(USART1);
 
-	/* Configure DMA for USART1 RX */
-	// Set the peripheral address for DMA RX to the USART1 data register
-	LL_DMA_SetPeriphAddress(
-		DMA1, LL_DMA_CHANNEL_1,
-		LL_USART_DMA_GetRegAddr(USART1, LL_USART_DMA_REG_DATA_RECEIVE));
-	// Set the memory address where received data will be stored
-	LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_1,
-		(uint32_t) g_uart_in_rx_buf[g_uart_in_tx_status]);
-	// Set the amount of data to be received
-	LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, BUFFER_SIZE);
+  /* Configure DMA for USART1 RX */
+  // Set the peripheral address for DMA RX to the USART1 data register
+  LL_DMA_SetPeriphAddress(
+      DMA1, LL_DMA_CHANNEL_1,
+      LL_USART_DMA_GetRegAddr(USART1, LL_USART_DMA_REG_DATA_RECEIVE));
+  // Set the memory address where received data will be stored
+  LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_1,
+                          (uint32_t)g_uart_in_rx_buf[g_uart_in_rx_index]);
+  // Set the amount of data to be received
+  LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, BUFFER_SIZE);
 
-	/* Enable DMA transfer complete and transfer error interrupts for RX */
-	LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_1);
-	LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_1);
+  /* Enable DMA transfer complete and transfer error interrupts for RX */
+  LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_1);
+  LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_1);
 
-	/* Start the DMA channel for USART1 RX and enable USART RX DMA */
-	LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
-	LL_USART_EnableDMAReq_RX(USART1);
-	// Clear any existing idle line flags
-	LL_USART_ClearFlag_IDLE(USART1);
+  /* Start the DMA channel for USART1 RX and enable USART RX DMA */
+  LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
+  LL_USART_EnableDMAReq_RX(USART1);
+  // Clear any existing idle line flags
+  LL_USART_ClearFlag_IDLE(USART1);
 
-	/* Configure DMA for USART1 TX */
-	// Set the peripheral address for DMA TX to the USART1 data register
-	LL_DMA_SetPeriphAddress(
-		DMA1, LL_DMA_CHANNEL_2,
-		LL_USART_DMA_GetRegAddr(USART1, LL_USART_DMA_REG_DATA_TRANSMIT));
-	// Enable USART1 TX DMA request for data transmission
-	LL_USART_EnableDMAReq_TX(USART1);
-	// Enable DMA transfer complete interrupt for USART1 TX
-	LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_2);
+  /* Configure DMA for USART1 TX */
+  // Set the peripheral address for DMA TX to the USART1 data register
+  LL_DMA_SetPeriphAddress(
+      DMA1, LL_DMA_CHANNEL_2,
+      LL_USART_DMA_GetRegAddr(USART1, LL_USART_DMA_REG_DATA_TRANSMIT));
+  // Enable USART1 TX DMA request for data transmission
+  LL_USART_EnableDMAReq_TX(USART1);
+  // Enable DMA transfer complete interrupt for USART1 TX
+  LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_2);
 }
 
 /**
@@ -305,50 +309,50 @@ void usart1_hart_init(void) {
  * @note This function configures USART2 to operate in both transmit (TX) and
  *       receive (RX) modes. It sets up the DMA channels for data transfer,
  *       enables idle line interrupts to signal the end of data reception,
- *       and configures necessary settings for effective data transmission and reception.
+ *       and configures necessary settings for effective data transmission and
+ * reception.
  *
  * @param  None
  * @retval None
  */
 void usart2_hart_init(void) {
-	// Set USART2 to operate in TX and RX mode
-	LL_USART_SetTransferDirection(USART2, LL_USART_DIRECTION_TX_RX);
+  // Set USART2 to operate in TX and RX mode
+  LL_USART_SetTransferDirection(USART2, LL_USART_DIRECTION_TX_RX);
 
-	// Enable idle line interrupt for USART2 to detect the end of data reception
-	LL_USART_EnableIT_IDLE(USART2);
+  // Enable idle line interrupt for USART2 to detect the end of data reception
+  LL_USART_EnableIT_IDLE(USART2);
 
-	/* Configure DMA for USART2 RX */
-	// Set the peripheral address for DMA RX to the USART2 data register
-	LL_DMA_SetPeriphAddress(
-		DMA1, LL_DMA_CHANNEL_3,
-		LL_USART_DMA_GetRegAddr(USART2, LL_USART_DMA_REG_DATA_RECEIVE));
-	// Set the memory address for storing the received data
-	LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_3,
-		(uint32_t) g_uart_out_rx_buf[g_uart_out_tx_status]);
-	// Set the amount of data to be received
-	LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, BUFFER_SIZE);
+  /* Configure DMA for USART2 RX */
+  // Set the peripheral address for DMA RX to the USART2 data register
+  LL_DMA_SetPeriphAddress(
+      DMA1, LL_DMA_CHANNEL_3,
+      LL_USART_DMA_GetRegAddr(USART2, LL_USART_DMA_REG_DATA_RECEIVE));
+  // Set the memory address for storing the received data
+  LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_3,
+                          (uint32_t)g_uart_out_rx_buf[g_uart_out_rx_index]);
+  // Set the amount of data to be received
+  LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, BUFFER_SIZE);
 
-	/* Enable DMA transfer complete and transfer error interrupts for RX */
-	LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_3);
-	LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
+  /* Enable DMA transfer complete and transfer error interrupts for RX */
+  LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_3);
+  LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
 
-	/* Start the DMA channel for USART2 RX and enable USART RX DMA */
-	LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
-	LL_USART_EnableDMAReq_RX(USART2);
-	// Clear any existing idle line flags
-	LL_USART_ClearFlag_IDLE(USART2);
+  /* Start the DMA channel for USART2 RX and enable USART RX DMA */
+  LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
+  LL_USART_EnableDMAReq_RX(USART2);
+  // Clear any existing idle line flags
+  LL_USART_ClearFlag_IDLE(USART2);
 
-	/* Configure DMA for USART2 TX */
-	// Set the peripheral address for DMA TX to the USART2 data register
-	LL_DMA_SetPeriphAddress(
-		DMA1, LL_DMA_CHANNEL_4,
-		LL_USART_DMA_GetRegAddr(USART2, LL_USART_DMA_REG_DATA_TRANSMIT));
-	// Enable USART2 TX DMA request for data transmission
-	LL_USART_EnableDMAReq_TX(USART2);
-	// Enable DMA transfer complete interrupt for USART2 TX
-	LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_4);
+  /* Configure DMA for USART2 TX */
+  // Set the peripheral address for DMA TX to the USART2 data register
+  LL_DMA_SetPeriphAddress(
+      DMA1, LL_DMA_CHANNEL_4,
+      LL_USART_DMA_GetRegAddr(USART2, LL_USART_DMA_REG_DATA_TRANSMIT));
+  // Enable USART2 TX DMA request for data transmission
+  LL_USART_EnableDMAReq_TX(USART2);
+  // Enable DMA transfer complete interrupt for USART2 TX
+  LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_4);
 }
-
 
 /**
  * @brief Transmit data using DMA for USART1.
@@ -356,23 +360,45 @@ void usart2_hart_init(void) {
  *       if the previous transmission is complete. If so, it sets the DMA
  *       memory address and data length for the new transmission before
  *       enabling the DMA channel to start the data transfer.
+ *       If transmission is not complete, the data is stored in a buffer
+ *       for later transmission.
  *
  * @param buf Pointer to the data buffer to be transmitted. This buffer should
  *            contain the data that you want to send over USART1.
- * @param size Size of the data to be transmitted, specifying the number of bytes
- *             in the buffer to send.
+ * @param size Size of the data to be transmitted, specifying the number of
+ *             bytes in the buffer to send.
  * @retval None
  */
 void usart1_transmit_dma(uint8_t *buf, uint16_t size) {
-	if (g_uart_in_transmit_commplete == 1) {
-		g_uart_in_transmit_commplete = 0; // Mark transmission as ongoing
-		// Set the DMA memory address for transmission
-		LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_2, (uint32_t) buf);
-		// Set the DMA transmission size
-		LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, size);
-		// Start the DMA transmission
-		LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
-	}
+  // Check if the previous transmission is complete
+  if (g_uart_in_transmit_complete) {
+    __disable_irq(); // Disable interrupts to protect the critical section
+    g_uart_in_transmit_complete = 0; // Mark transmission as in progress
+
+    // Set the DMA memory address and data length for the transmission
+    LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_2, buf);
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, size);
+
+    // Start the DMA transmission for USART1
+    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
+    __enable_irq(); // Re-enable interrupts after critical section
+  } else {
+    // If DMA is busy, check if there is space in the buffer to store the new
+    // data
+    if (tx_in_buffer.packet_count < MAX_QUEUE_SIZE && size < BUFFER_SIZE) {
+      __disable_irq(); // Disable interrupts to protect the critical section
+
+      // Store the data in the buffer for later transmission
+      memcpy(tx_in_buffer.send_queue[tx_in_buffer.tail].data, buf, size);
+      tx_in_buffer.send_queue[tx_in_buffer.tail].length = size;
+
+      // Update the tail pointer and packet count
+      tx_in_buffer.tail = (tx_in_buffer.tail + 1) % MAX_QUEUE_SIZE;
+      tx_in_buffer.packet_count++;
+
+      __enable_irq(); // Re-enable interrupts after critical section
+    }
+  }
 }
 
 /**
@@ -381,24 +407,46 @@ void usart1_transmit_dma(uint8_t *buf, uint16_t size) {
  *       if the previous transmission is complete. If so, it sets the DMA
  *       memory address and data length for the new transmission before
  *       enabling the DMA channel to start the data transfer.
+ *       If transmission is not complete, the data is stored in a buffer
+ *       for later transmission.
  *
  * @param buf Pointer to the data buffer to be transmitted. This buffer should
  *            contain the data that you want to send over USART2.
- * @param size Size of the data to be transmitted, specifying the number of bytes
- *             in the buffer to send.
+ * @param size Size of the data to be transmitted, specifying the number of
+ *             bytes in the buffer to send.
  * @retval None
  */
 void usart2_transmit_dma(uint8_t *buf, uint16_t size) {
-	if (g_uart_out_transmit_commplete == 1) {
-		g_uart_out_transmit_commplete = 0; // Mark transmission as ongoing
-		// Set the DMA memory address for transmission
-		LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_4, (uint32_t) buf);
-		// Set the DMA transmission size
-		LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_4, size);
-		// Start the DMA transmission
-		LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_4);
-	}
-}
+  // Check if the previous transmission is complete
+  if (g_uart_out_transmit_complete) {
+    __disable_irq(); // Disable interrupts to protect the critical section
+    g_uart_out_transmit_complete = 0; // Mark transmission as in progress
 
+    // Set the DMA memory address and data length for the transmission
+    LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_4, buf);
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_4, size);
+
+    // Start the DMA transmission for USART2
+    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_4);
+
+    __enable_irq(); // Re-enable interrupts after critical section
+  } else {
+    // If DMA is busy, check if there is space in the buffer to store the new
+    // data
+    if (tx_out_buffer.packet_count < MAX_QUEUE_SIZE && size < BUFFER_SIZE) {
+      __disable_irq(); // Disable interrupts to protect the critical section
+
+      // Store the data in the buffer for later transmission
+      memcpy(tx_out_buffer.send_queue[tx_out_buffer.tail].data, buf, size);
+      tx_out_buffer.send_queue[tx_out_buffer.tail].length = size;
+
+      // Update the tail pointer and packet count
+      tx_out_buffer.tail = (tx_out_buffer.tail + 1) % MAX_QUEUE_SIZE;
+      tx_out_buffer.packet_count++;
+
+      __enable_irq(); // Re-enable interrupts after critical section
+    }
+  }
+}
 
 /* USER CODE END 1 */

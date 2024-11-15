@@ -16,6 +16,8 @@ __IO static int16_t s_adc_map_16value[ADC_CHANNEL_NUMS] = {
 __IO static int8_t s_adc_map_8value[ADC_CHANNEL_NUMS] = {
     0}; // Buffer for mapped 8-bit ADC values
 
+__IO static uint32_t s_last_press_time = 0; // Store the last press time in milliseconds
+
 #if DEBUG
 static uint8_t s_ret_buf[256] = {0}; // Return buffer size for debug mode
 #else
@@ -378,19 +380,25 @@ void chain_joystick_button_press(void) {
 }
 
 /**
- * @brief Callback for external interrupt when the button is pressed.
- * @note This function debounces the button press and calls the appropriate
- * handler.
- *
- * @param GPIO_Pin The pin that triggered the interrupt.
+ * @brief GPIO EXTI falling edge interrupt callback (Button Press).
+ * @note This function is triggered by the falling edge of the button press.
+ *       It incorporates debouncing logic to only trigger the event once every 200ms.
+ * @param GPIO_Pin GPIO pin that triggered the interrupt.
  * @retval None
  */
-void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin) {
-  if (GPIO_Pin == BTN1_Pin) {
-    // Check for debounce delay
-    if (HAL_GetTick() - s_last_interrupt_time > DEBOUNCE_DELAY) {
-      s_last_interrupt_time = HAL_GetTick(); // Update last interrupt time
-      chain_joystick_button_press();         // Handle button press
-    }
-  }
+void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
+{
+	if (GPIO_Pin == BTN1_Pin)
+	{
+		uint32_t current_time = HAL_GetTick(); // Get current system tick in milliseconds
+
+		// Check if debounce time has passed (current time - last press time >= debounce time)
+		if (current_time - s_last_press_time >= DEBOUNCE_TIME_MS)
+		{
+			g_key_flag = 1;
+
+			// Update the last press time
+			s_last_press_time = current_time;
+		}
+	}
 }

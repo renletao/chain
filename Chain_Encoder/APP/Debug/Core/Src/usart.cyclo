@@ -1,6 +1,6 @@
-../Core/Src/usart.c:254:6:usart1_hart_init	1
-../Core/Src/usart.c:29:6:MX_USART1_UART_Init	4
-../Core/Src/usart.c:283:6:usart2_hart_init	1
-../Core/Src/usart.c:148:6:MX_USART2_UART_Init	3
-../Core/Src/usart.c:311:6:usart1_transmit_dma	2
-../Core/Src/usart.c:324:6:usart2_transmit_dma	2
+../Core/Src/usart.c:267:6:usart1_hart_init	1
+../Core/Src/usart.c:32:6:MX_USART1_UART_Init	4
+../Core/Src/usart.c:318:6:usart2_hart_init	1
+../Core/Src/usart.c:150:6:MX_USART2_UART_Init	3
+../Core/Src/usart.c:372:6:usart1_transmit_dma	4
+../Core/Src/usart.c:419:6:usart2_transmit_dma	4

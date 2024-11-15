@@ -21,7 +21,8 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
-
+circular_buffer tx_in_buffer = {0};
+circular_buffer tx_out_buffer = {0};
 /* USER CODE END 0 */
 
 /* USART1 init function */
@@ -38,7 +39,7 @@ void MX_USART1_UART_Init(void) {
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /** Initializes the peripherals clocks
-  */
+   */
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1;
   PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK1;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
@@ -276,7 +277,7 @@ void usart1_hart_init(void) {
       LL_USART_DMA_GetRegAddr(USART1, LL_USART_DMA_REG_DATA_RECEIVE));
   // Set the memory address where received data will be stored
   LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_1,
-                          (uint32_t)g_uart_out_rx_buf[g_uart_out_buf_status]);
+                          (uint32_t)g_uart_out_rx_buf[g_uart_out_rx_index]);
   // Set the amount of data to be received
   LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, BUFFER_SIZE);
 
@@ -326,7 +327,7 @@ void usart2_hart_init(void) {
       LL_USART_DMA_GetRegAddr(USART2, LL_USART_DMA_REG_DATA_RECEIVE));
   // Set the memory address for storing the received data
   LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_3,
-                          (uint32_t)g_uart_in_rx_buf[g_uart_in_buf_status]);
+                          (uint32_t)g_uart_in_rx_buf[g_uart_in_rx_index]);
   // Set the amount of data to be received
   LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, BUFFER_SIZE);
 
@@ -352,32 +353,6 @@ void usart2_hart_init(void) {
 }
 
 /**
- * @brief Transmit data using DMA for USART1.
- * @note This function initiates a DMA transmission for USART1. It checks
- *       if the previous transmission is complete. If so, it sets the DMA
- *       memory address and data length for the new transmission before
- *       enabling the DMA channel to start the data transfer.
- *
- * @param buf Pointer to the data buffer to be transmitted. This buffer should
- *            contain the data that you want to send over USART1.
- * @param size Size of the data to be transmitted, specifying the number of
- * bytes
- *             in the buffer to send.
- * @retval None
- */
-void usart1_transmit_dma(uint8_t *buf, uint16_t size) {
-  if (g_uart_out_transmit_commplete == 1) {
-    g_uart_out_transmit_commplete = 0; // Mark transmission as ongoing
-    // Set the DMA memory address for transmission
-    LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_2, (uint32_t)buf);
-    // Set the DMA transmission size
-    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, size);
-    // Start the DMA transmission
-    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
-  }
-}
-
-/**
  * @brief Transmit data using DMA for USART2.
  * @note This function initiates a DMA transmission for USART2. It checks
  *       if the previous transmission is complete. If so, it sets the DMA
@@ -387,19 +362,76 @@ void usart1_transmit_dma(uint8_t *buf, uint16_t size) {
  * @param buf Pointer to the data buffer to be transmitted. This buffer should
  *            contain the data that you want to send over USART2.
  * @param size Size of the data to be transmitted, specifying the number of
- * bytes
- *             in the buffer to send.
+ *             bytes in the buffer to send.
+ * @retval None
+ */
+void usart1_transmit_dma(uint8_t *buf, uint16_t size) {
+  // Check if the transmission is idle
+  if (g_uart_out_transmit_complete) {
+    __disable_irq(); // Disable interrupts to protect the critical section
+    g_uart_out_transmit_complete = 0; // Mark transmission as in progress
+
+    // Set the DMA memory address and data length for the transmission
+    LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_2, buf);
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, size);
+
+    // Start the DMA transmission for USART1
+    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
+    __enable_irq(); // Re-enable interrupts after critical section
+  } else {
+    if (tx_out_buffer.packet_count < MAX_QUEUE_SIZE && size < BUFFER_SIZE) {
+      __disable_irq(); // Disable interrupts to protect the critical section
+      // Copy data to the send queue and update queue pointers
+      memcpy(tx_out_buffer.send_queue[tx_out_buffer.tail].data, buf, size);
+      tx_out_buffer.send_queue[tx_out_buffer.tail].length = size;
+      tx_out_buffer.tail = (tx_out_buffer.tail + 1) % MAX_QUEUE_SIZE;
+      tx_out_buffer.packet_count++;
+      __enable_irq(); // Re-enable interrupts after critical section
+    }
+  }
+}
+
+/**
+ * @brief Transmit data using DMA for USART1.
+ * @note This function initiates a DMA transmission for USART1. It checks
+ *       if the previous transmission is complete. If so, it sets the DMA
+ *       memory address and data length for the new transmission before
+ *       enabling the DMA channel to start the data transfer.
+ *
+ * @param buf Pointer to the data buffer to be transmitted. This buffer should
+ *            contain the data that you want to send over USART1.
+ * @param size Size of the data to be transmitted, specifying the number of
+ *             bytes in the buffer to send.
  * @retval None
  */
 void usart2_transmit_dma(uint8_t *buf, uint16_t size) {
-  if (g_uart_in_transmit_commplete == 1) {
-    g_uart_in_transmit_commplete = 0; // Mark transmission as ongoing
-    // Set the DMA memory address for transmission
-    LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_4, (uint32_t)buf);
-    // Set the DMA transmission size
+  // Check if the previous transmission is complete
+  if (g_uart_in_transmit_complete) {
+    __disable_irq(); // Disable interrupts to protect the critical section
+    g_uart_in_transmit_complete = 0; // Mark transmission as in progress
+
+    // Set the DMA memory address and data length for the transmission
+    LL_DMA_SetMemoryAddress(DMA1, LL_DMA_CHANNEL_4, buf);
     LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_4, size);
-    // Start the DMA transmission
+
+    // Start the DMA transmission for USART2
     LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_4);
+
+    __enable_irq(); // Re-enable interrupts after critical section
+  } else {
+    // If DMA is busy, check if there is space in the buffer to store the new
+    // data
+    if (tx_in_buffer.packet_count < MAX_QUEUE_SIZE && size < BUFFER_SIZE) {
+      __disable_irq(); // Disable interrupts to protect the critical section
+
+      // Copy data to the send queue and update queue pointers
+      memcpy(tx_in_buffer.send_queue[tx_in_buffer.tail].data, buf, size);
+      tx_in_buffer.send_queue[tx_in_buffer.tail].length = size;
+      tx_in_buffer.tail = (tx_in_buffer.tail + 1) % MAX_QUEUE_SIZE;
+      tx_in_buffer.packet_count++;
+
+      __enable_irq(); // Re-enable interrupts after critical section
+    }
   }
 }
 

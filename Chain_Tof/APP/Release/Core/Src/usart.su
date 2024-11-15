@@ -1,6 +1,6 @@
-../Core/Src/usart.c:264:6:usart1_hart_init	16	static,ignoring_inline_asm
-../Core/Src/usart.c:29:6:MX_USART1_UART_Init	144	static,ignoring_inline_asm
-../Core/Src/usart.c:313:6:usart2_hart_init	16	static,ignoring_inline_asm
-../Core/Src/usart.c:148:6:MX_USART2_UART_Init	104	static,ignoring_inline_asm
-../Core/Src/usart.c:366:6:usart1_transmit_dma	0	static
-../Core/Src/usart.c:391:6:usart2_transmit_dma	0	static
+../Core/Src/usart.c:268:6:usart1_hart_init	16	static,ignoring_inline_asm
+../Core/Src/usart.c:32:6:MX_USART1_UART_Init	144	static,ignoring_inline_asm
+../Core/Src/usart.c:319:6:usart2_hart_init	16	static,ignoring_inline_asm
+../Core/Src/usart.c:151:6:MX_USART2_UART_Init	104	static,ignoring_inline_asm
+../Core/Src/usart.c:373:6:usart1_transmit_dma	16	static,ignoring_inline_asm
+../Core/Src/usart.c:420:6:usart2_transmit_dma	16	static,ignoring_inline_asm

@@ -20,7 +20,7 @@ extern "C" {
 #define CHECK_ERROR (0)               // Check not passed
 #define SOFTWARE_VERSION (1)          // Software version
 #define PRODUCT_TYPE_HIGH (0)         // Define product type
-#define PRODUCT_TYPE_LOW  (0)         // Define product type
+#define PRODUCT_TYPE_LOW  (6)         // Define product type
 #define PACK_HEAD_HIGH (0xAA)         // Packet header
 #define PACK_HEAD_LOW  (0x55)         // Packet header
 #define PACK_END_HIGH (0x55)          // Packet tail

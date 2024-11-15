@@ -46,7 +46,7 @@ Core/Chain_Function/angle_function.o: \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h \
  ../Core/Inc/adc.h ../Core/Inc/main.h \
  ../Core/Chain_Function/base_function.h ../Core/Inc/usart.h \
- C:/Users/15191/Desktop/chain/Chain_Angle/APP/Core/flash/myflash.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Angle/APP/Core/flash/myflash.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h
 ../Core/Chain_Function/angle_function.h:
 ../Core/Inc/main.h:
@@ -97,5 +97,5 @@ Core/Chain_Function/angle_function.o: \
 ../Core/Inc/main.h:
 ../Core/Chain_Function/base_function.h:
 ../Core/Inc/usart.h:
-C:/Users/15191/Desktop/chain/Chain_Angle/APP/Core/flash/myflash.h:
+C:/Users/15191/Desktop/chainV5/Chain_Angle/APP/Core/flash/myflash.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h:

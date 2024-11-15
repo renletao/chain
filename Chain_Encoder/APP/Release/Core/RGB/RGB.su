@@ -2,7 +2,7 @@
 ../Core/RGB/RGB.c:53:13:rgb_setcolor	48	static
 ../Core/RGB/RGB.c:80:13:reset_load	0	static
 ../Core/RGB/RGB.c:95:13:rgb_send_array	0	static
-../Core/RGB/RGB.c:114:13:turn_off_all_handle	8	static
+../Core/RGB/RGB.c:114:6:turn_off_all_handle	8	static
 ../Core/RGB/RGB.c:133:6:rgb_init	8	static
 ../Core/RGB/RGB.c:150:6:chain_set_rgb_value	8	static
 ../Core/RGB/RGB.c:190:6:chain_get_rgb_value	8	static

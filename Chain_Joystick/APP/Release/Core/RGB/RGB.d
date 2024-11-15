@@ -43,9 +43,9 @@ Core/RGB/RGB.o: ../Core/RGB/RGB.c ../Core/Inc/tim.h ../Core/Inc/main.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_dma.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h \
  ../Core/RGB/RGB.h ../Core/Inc/main.h \
- C:/Users/15191/Desktop/chain/Chain_Joystick/APP/Core/Chain_Function/base_function.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Joystick/APP/Core/Chain_Function/base_function.h \
  ../Core/Inc/usart.h \
- C:/Users/15191/Desktop/chain/Chain_Joystick/APP/Core/flash/myflash.h \
+ C:/Users/15191/Desktop/chainV5/Chain_Joystick/APP/Core/flash/myflash.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h
 ../Core/Inc/tim.h:
 ../Core/Inc/main.h:
@@ -94,7 +94,7 @@ Core/RGB/RGB.o: ../Core/RGB/RGB.c ../Core/Inc/tim.h ../Core/Inc/main.h \
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h:
 ../Core/RGB/RGB.h:
 ../Core/Inc/main.h:
-C:/Users/15191/Desktop/chain/Chain_Joystick/APP/Core/Chain_Function/base_function.h:
+C:/Users/15191/Desktop/chainV5/Chain_Joystick/APP/Core/Chain_Function/base_function.h:
 ../Core/Inc/usart.h:
-C:/Users/15191/Desktop/chain/Chain_Joystick/APP/Core/flash/myflash.h:
+C:/Users/15191/Desktop/chainV5/Chain_Joystick/APP/Core/flash/myflash.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h:
