@@ -44,7 +44,7 @@ Core/Chain_Function/encoder_function.o: \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_ll_exti.h \
  ../Core/Chain_Function/base_function.h ../Core/Inc/usart.h \
  ../Core/Inc/main.h ../Core/Inc/tim.h \
- C:/Users/15191/Desktop/chainV5/Chain_Encoder/APP/Core/flash/myflash.h \
+ C:/Users/15191/Desktop/chainV5/chain/Chain_Encoder/APP/Core/flash/myflash.h \
  ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h
 ../Core/Chain_Function/encoder_function.h:
 ../Core/Inc/main.h:
@@ -93,5 +93,5 @@ Core/Chain_Function/encoder_function.o: \
 ../Core/Inc/usart.h:
 ../Core/Inc/main.h:
 ../Core/Inc/tim.h:
-C:/Users/15191/Desktop/chainV5/Chain_Encoder/APP/Core/flash/myflash.h:
+C:/Users/15191/Desktop/chainV5/chain/Chain_Encoder/APP/Core/flash/myflash.h:
 ../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_flash_ex.h:
